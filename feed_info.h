@@ -26,11 +26,11 @@ private:
     French: ""Genève,"" ""Zurich,"" and ""Bienne""
     Italian: ""Ginevra,"" ""Zurigo,"" and ""Bienna""
     English: ""Geneva,"" ""Zurich,"" and ""Biel/Bienne""*/
-    /* Language code */ int feed_lang; // Required
+    std::string feed_lang; // Required
 
     /* Defines the language used when the data consumer doesn’t know the language of the rider. It's often defined as
      * en, English. */
-    /* Language code */ int default_lang; // Optional
+    std::string default_lang; // Optional
 
     /* The dataset provides complete and reliable schedule information for service in the period from the beginning of
      * the feed_start_date day to the end of the feed_end_date day. Both days can be left empty if unavailable. The
@@ -52,7 +52,7 @@ private:
     /* Email address for communication regarding the GTFS dataset and data publishing practices. feed_contact_email is
      * a technical contact for GTFS-consuming applications. Provide customer service contact information through
      * agency.txt. */
-    /* Email */ int feed_contact_email; // Optional
+    std::string feed_contact_email; // Optional
 
     /* URL for contact information, a web-form, support desk, or other tools for communication regarding the GTFS
      * dataset and data publishing practices. feed_contact_url is a technical contact for GTFS-consuming applications.

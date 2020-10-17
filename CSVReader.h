@@ -1,27 +1,14 @@
 #pragma once
 
+#include <iomanip>
+#include <iostream>
 #include <string>
 #include <vector>
 
+
 class CSVReader
 {
-private:
-    class Row;
-
 public:
-    CSVReader(std::string filename);
-    ~CSVReader();
-
-    auto begin() const { return _rows.begin(); }
-    auto end() const { return _rows.end(); }
-
-    const Row& getHeader() const { return _header; }
-    size_t rowCount() const { return _rows.size(); }
-    std::string getFilename() const { return _fileName; }
-
-    size_t getPrintWidth(size_t fieldId) const { return _fieldPrintWidths.at(fieldId); }
-
-private:
     class Row
     {
         friend CSVReader;
@@ -43,6 +30,23 @@ private:
         std::vector<std::string> _fields{ "" };
     };
 
+public:
+    CSVReader(std::string filename);
+    ~CSVReader();
+
+    auto begin() const { return _rows.begin(); }
+    auto end() const { return _rows.end(); }
+
+    const Row& getHeader() const { return _header; }
+    size_t rowCount() const { return _rows.size(); }
+    std::string getFilename() const { return _fileName; }
+
+    size_t getPrintWidth(size_t fieldId) const { return _fieldPrintWidths.at(fieldId); }
+
+    void printCSV() const;
+
+private:
+    static const int max_row_read = 12;
     Row _header;
     std::vector<Row> _rows;
     std::string _fileName;

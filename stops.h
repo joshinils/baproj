@@ -90,7 +90,7 @@ private:
      * entered as the time since midnight in the timezone specified by agency.agency_timezone. This ensures that the
      * time values in a trip always increase over the course of a trip, regardless of which timezones the trip crosses.
      */
-    /* Timezone */ int stop_timezone; // Optional
+    std::string stop_timezone; // Optional
 
     /* Indicates whether wheelchair boardings are possible from the location. Valid options are:
 

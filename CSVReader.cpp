@@ -16,8 +16,11 @@ CSVReader::CSVReader(std::string filename)
     for(size_t i = 0; i < _header._fields.size(); i++)
     { _fieldPrintWidths[i] = std::max(_fieldPrintWidths[i], _header._fields[i].size()); }
 
+    int rows_read = 0;
     for(std::string line; getline(file, line);)
     {
+        if(rows_read++ > max_row_read) break;
+
         this->_rows.push_back(Row(line));
         for(size_t i = 0; i < _rows.back()._fields.size(); i++)
         { _fieldPrintWidths[i] = std::max(_fieldPrintWidths[i], _rows.back()._fields[i].size()); }
@@ -87,4 +90,37 @@ CSVReader::Row::Row(std::string row)
     // {
     //     std::cout << l << '\n';
     // }
+}
+
+void CSVReader::printCSV() const
+{
+    int limit_out = 0;
+    int max_out   = 12;
+
+    std::cout << this->getFilename() << " \tcontains " << this->rowCount() << " rows:\n";
+
+    for(size_t i = 0; i < this->getHeader().size(); i++)
+    {
+        if(i + 1 < this->getHeader().size())
+            std::cout << std::left << std::setw(this->getPrintWidth(i) + 8)
+                      << "\u201C" + this->getHeader()[i] + "\u201D" + ", ";
+        else
+            std::cout << std::left << std::setw(this->getPrintWidth(i) + 6)
+                      << "\u201C" + this->getHeader()[i] + "\u201D";
+    }
+    std::cout << "\n";
+
+    for(auto row : *this)
+    {
+        if(limit_out++ > max_out) break;
+        for(size_t i = 0; i < row.size(); i++)
+        {
+            if(i + 1 < row.size())
+                std::cout << std::left << std::setw(this->getPrintWidth(i) + 8) << "\u201C" + row[i] + "\u201D" + ", ";
+            else
+                std::cout << std::left << std::setw(this->getPrintWidth(i) + 6) << "\u201C" + row[i] + "\u201D";
+        }
+        std::cout << "\n";
+    }
+    std::cout << '\n';
 }
