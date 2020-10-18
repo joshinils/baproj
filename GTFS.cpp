@@ -4,10 +4,6 @@
 
 GTFS::GTFS(const std::string& folder)
 {
-    std::cout << "std::filesystem::current_path: " << std::filesystem::current_path() << '\n';
-    std::cout << folder + "/agency.txt"
-              << " exists: " << std::filesystem::exists(folder + "/agency.txt") << '\n';
-
     if(std::filesystem::exists(folder + "/agency.txt"))
     {
         CSVReader agency(folder + "/agency.txt");
@@ -90,12 +86,119 @@ GTFS::GTFS(const std::string& folder)
         throw std::string(folder + "/agency.txt not found!");
     }
 
-
     if(std::filesystem::exists(folder + "/stops.txt"))
     {
         CSVReader stops(folder + "/stops.txt");
         stops.printCSV();
-        this->stops;
+
+        //int                               stop_id;
+        //std::optional<std::string>        stop_code;
+        //std::optional<std::string>        stop_name;
+        //std::optional<std::string>        stop_desc;
+        //std::optional<double>             stop_lat;
+        //std::optional<double>             stop_lon;
+        //std::optional<int>                zone_id;
+        //std::optional<std::string>        stop_url;
+        //Stops::location_type_enum         location_type;
+        //std::optional<int>                parent_station;
+        //std::optional<std::string>        stop_timezone;
+        //Stops::wheelchair_boarding_enum   wheelchair_boarding;
+        //std::optional<int>                level_id;
+        //std::optional<std::string>        platform_code;
+
+        bool hasStop_code           = false;
+        bool hasStop_name           = false;
+        bool hasStop_desc           = false;
+        bool hasStop_lat            = false;
+        bool hasStop_lon            = false;
+        bool hasZone_id             = false;
+        bool hasStop_url            = false;
+        bool hasLocation_type       = false;
+        bool hasParent_station      = false;
+        bool hasStop_timezone       = false;
+        bool hasWheelchair_boarding = false;
+        bool hasLevel_id            = false;
+        bool hasPlatform_code       = false;
+
+        int stop_idIdx             = -1;
+        int stop_codeIdx           = -1;
+        int stop_nameIdx           = -1;
+        int stop_descIdx           = -1;
+        int stop_latIdx            = -1;
+        int stop_lonIdx            = -1;
+        int zone_idIdx             = -1;
+        int stop_urlIdx            = -1;
+        int location_typeIdx       = -1;
+        int parent_stationIdx      = -1;
+        int stop_timezoneIdx       = -1;
+        int wheelchair_boardingIdx = -1;
+        int level_idIdx            = -1;
+        int platform_codeIdx       = -1;
+
+        int colIndex = 0;
+        for(const auto& e : stops.getHeader())
+        {
+            if(e == "stop_id") { stop_idIdx = colIndex; }
+            // TODO adjust copy paste to stops from agency:
+
+            // else if(e == "stops_name")
+            // {
+            //     stopsNameIdx = colIndex;
+            // }
+            // else if(e == "stops_url")
+            // {
+            //     stopsUrlIdx = colIndex;
+            // }
+            // else if(e == "stops_timezone")
+            // {
+            //     stopsTimezoneIdx = colIndex;
+            // }
+            // else if(!hasStopsLang && e == "stops_lang")
+            // {
+            //     hasStopsLang = true;
+            //     stopsLangIdx = colIndex;
+            // }
+            // else if(!hasStopsPhone && e == "stops_phone")
+            // {
+            //     hasStopsPhone = true;
+            //     stopsPhoneIdx = colIndex;
+            // }
+            // else if(!hasStopsFareUrl && e == "stops_fare_url")
+            // {
+            //     hasStopsFareUrl = true;
+            //     stopsFareUrlIdx = colIndex;
+            // }
+            // else if(!hasStopsEmail && e == "stops_email")
+            // {
+            //     hasStopsEmail = true;
+            //     stopsEmailIdx = colIndex;
+            // }
+
+            ++colIndex;
+        }
+
+        for(auto row : stops)
+        {
+            this->stops.emplace_back(Stops(std::stoi(row[stop_idIdx]),
+                                           hasStop_code ? row[stop_codeIdx] : std::optional<std::string>(),
+                                           hasStop_name ? row[stop_nameIdx] : std::optional<std::string>(),
+                                           hasStop_desc ? row[stop_descIdx] : std::optional<std::string>(),
+                                           hasStop_lat ? std::stod(row[stop_latIdx]) : std::optional<double>(),
+                                           hasStop_lon ? std::stod(row[stop_lonIdx]) : std::optional<double>(),
+                                           hasZone_id ? std::stoi(row[zone_idIdx]) : std::optional<int>(),
+                                           hasStop_url ? row[stop_urlIdx] : std::optional<std::string>(),
+                                           hasLocation_type ? Stops::location_type_enum(stoi(row[location_typeIdx]))
+                                                            : Stops::location_type_enum::Unset,
+                                           hasParent_station ? std::stoi(row[parent_stationIdx]) : std::optional<int>(),
+                                           hasStop_timezone ? row[stop_timezoneIdx] : std::optional<std::string>(),
+                                           hasWheelchair_boarding
+                                           ? Stops::wheelchair_boarding_enum(std::stoi(row[wheelchair_boardingIdx]))
+                                           : Stops::wheelchair_boarding_enum::Unset,
+                                           hasLevel_id ? std::stoi(row[level_idIdx]) : std::optional<int>(),
+                                           hasPlatform_code ? row[platform_codeIdx] : std::optional<std::string>()));
+        }
+        //TODO write output operator for stops
+        //for(auto row : this->stops) std::cout << row << std::endl;
     }
     else
     {

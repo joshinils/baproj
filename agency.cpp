@@ -27,5 +27,3 @@ Agency::Agency(std::optional<int> agency_id,
     // std::optional<std::string> agency_fare_url;
     // std::optional<std::string> agency_email;
 }
-
-Agency::~Agency() { }
