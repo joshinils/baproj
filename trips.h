@@ -31,11 +31,14 @@ private:
     /* Indicates the direction of travel for a trip. This field is not used in routing; it provides a way to separate
     trips by direction when publishing time tables. Valid options are:
 
-    0 - Travel in one direction (e.g. outbound travel).
-    1 - Travel in the opposite direction (e.g. inbound travel).Example: The trip_headsign and direction_id fields could be used together to assign a name to travel in each direction for a set of trips. A trips.txt file could contain these records for use in time tables:
-     trip_id,...,trip_headsign,direction_id
-     1234,...,Airport,0
-     1505,...,Downtown,1*/
+        0 - Travel in one direction (e.g. outbound travel).
+        1 - Travel in the opposite direction (e.g. inbound travel).
+
+    Example: The trip_headsign and direction_id fields could be used together to assign a name to travel in each
+    direction for a set of trips. A trips.txt file could contain these records for use in time tables:
+        trip_id,...,trip_headsign,direction_id
+        1234,...,Airport,0
+        1505,...,Downtown,1*/
     enum class direction_id_enum
     {
         Unset, // this field is optional
@@ -52,15 +55,16 @@ private:
     /* Identifies a geospatial shape that describes the vehicle travel path for a trip.
 
     Conditionally required:
-     This field is required if the trip has continuous behavior defined, either at the route level or at the stop time level.
+     This field is required if the trip has continuous behavior defined, either at the route level or at the stop time
+     level.
     Otherwise, it's optional.*/
     /* ID referencing shapes.shape_id */ int shape_id; // Conditionally required
 
     /* Indicates wheelchair accessibility. Valid options are:
 
-    0 or empty - No accessibility information for the trip.
-    1 - Vehicle being used on this particular trip can accommodate at least one rider in a wheelchair.
-    2 - No riders in wheelchairs can be accommodated on this trip.*/
+        0 or empty - No accessibility information for the trip.
+        1 - Vehicle being used on this particular trip can accommodate at least one rider in a wheelchair.
+        2 - No riders in wheelchairs can be accommodated on this trip.*/
     enum class wheelchair_accessible_enum
     {
         Unset, // this field is optional
@@ -72,9 +76,9 @@ private:
 
     /* Indicates whether bikes are allowed. Valid options are:
 
-    0 or empty - No bike information for the trip.
-    1 - Vehicle being used on this particular trip can accommodate at least one bicycle.
-    2 - No bicycles are allowed on this trip.*/
+        0 or empty - No bike information for the trip.
+        1 - Vehicle being used on this particular trip can accommodate at least one bicycle.
+        2 - No bicycles are allowed on this trip.*/
     enum class bikes_allowed_enum
     {
         Unset, // this field is optional

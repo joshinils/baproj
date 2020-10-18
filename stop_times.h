@@ -16,7 +16,12 @@ private:
     the service day, enter the time as a value greater than 24:00:00 in HH:MM:SS local time for the day on which the
     trip schedule begins.
 
-    Scheduled stops where the vehicle strictly adheres to the specified arrival and departure times are timepoints. If this stop is not a timepoint, it is recommended to provide an estimated or interpolated time. If this is not available, arrival_time can be left empty. Further, indicate that interpolated times are provided with timepoint=0. If interpolated times are indicated with timepoint=0, then time points must be indicated with timepoint=1. Provide arrival times for all stops that are time points. An arrival time must be specified for the first and the last stop in a trip.*/
+    Scheduled stops where the vehicle strictly adheres to the specified arrival and departure times are timepoints. If
+    this stop is not a timepoint, it is recommended to provide an estimated or interpolated time. If this is not
+    available, arrival_time can be left empty. Further, indicate that interpolated times are provided with timepoint=0.
+    If interpolated times are indicated with timepoint=0, then time points must be indicated with timepoint=1. Provide
+    arrival times for all stops that are time points. An arrival time must be specified for the first and the last stop
+    in a trip.*/
     /* Time */ int arrival_time; // Conditionally required
 
     /* Departure time from a specific stop for a specific trip on a route. For times occurring after midnight on the
@@ -25,7 +30,8 @@ private:
      arrival_time and departure_time. See the arrival_time description for more details about using timepoints
      correctly.
 
-     The departure_time field should specify time values whenever possible, including non-binding estimated or interpolated times between timepoints.*/
+     The departure_time field should specify time values whenever possible, including non-binding estimated or
+     interpolated times between timepoints.*/
     /* Time */ int departure_time; // Conditionally required
 
     /* Identifies the serviced stop. All stops serviced during a trip must have a record in stop_times.txt. Referenced
@@ -42,15 +48,17 @@ private:
      trips.trip_headsign when the headsign changes between stops. If the headsign is displayed for an entire trip, use
      trips.trip_headsign instead.
 
-     A stop_headsign value specified for one stop_time does not apply to subsequent stop_times in the same trip. If you want to override the trip_headsign for multiple stop_times in the same trip, the stop_headsign value must be repeated in each stop_time row.*/
+     A stop_headsign value specified for one stop_time does not apply to subsequent stop_times in the same trip. If you
+     want to override the trip_headsign for multiple stop_times in the same trip, the stop_headsign value must be
+     repeated in each stop_time row.*/
     std::string stop_headsign; // Optional
 
     /* Indicates pickup method. Valid options are:
 
-    0 or empty - Regularly scheduled pickup.
-    1 - No pickup available.
-    2 - Must phone agency to arrange pickup.
-    3 - Must coordinate with driver to arrange pickup.*/
+        0 or empty - Regularly scheduled pickup.
+        1 - No pickup available.
+        2 - Must phone agency to arrange pickup.
+        3 - Must coordinate with driver to arrange pickup.*/
     enum class pickup_type_enum
     {
         //TODO
@@ -59,10 +67,10 @@ private:
 
     /* Indicates drop off method. Valid options are:
 
-    0 or empty - Regularly scheduled drop off.
-    1 - No drop off available.
-    2 - Must phone agency to arrange drop off.
-    3 - Must coordinate with driver to arrange drop off.*/
+        0 or empty - Regularly scheduled drop off.
+        1 - No drop off available.
+        2 - Must phone agency to arrange drop off.
+        3 - Must coordinate with driver to arrange drop off.*/
     enum class drop_off_type_enum
     {
         //TODO
@@ -73,10 +81,10 @@ private:
     is described by shapes.txt, from this stop_time to the next stop_time in the trip’s stop_sequence. Valid options
     are:
 
-    0 - Continuous stopping pickup.
-    1 or empty - No continuous stopping pickup.
-    2 - Must phone an agency to arrange continuous pickup.
-    3 - Must coordinate with a driver to arrange continuous stopping pickup.
+        0 - Continuous stopping pickup.
+        1 or empty - No continuous stopping pickup.
+        2 - Must phone an agency to arrange continuous pickup.
+        3 - Must coordinate with a driver to arrange continuous stopping pickup.
 
     The continuous pickup behavior indicated in stop_times.txt overrides any behavior defined in routes.txt.*/
     enum class continuous_pickup_enum
@@ -88,10 +96,10 @@ private:
     /* Indicates whether a rider can alight from the transit vehicle at any point along the vehicle’s travel path as
     described by shapes.txt, from this stop_time to the next stop_time in the trip’s stop_sequence.
 
-    0 - Continuous stopping drop off.
-    1 or empty - No continuous stopping drop off.
-    2 - Must phone an agency to arrange continuous drop off.
-    3 - Must coordinate with a driver to arrange continuous stopping drop off.
+        0 - Continuous stopping drop off.
+        1 or empty - No continuous stopping drop off.
+        2 - Must phone an agency to arrange continuous drop off.
+        3 - Must coordinate with a driver to arrange continuous stopping drop off.
 
     The continuous drop-off behavior indicated in stop_times.txt overrides any behavior defined in routes.txt.*/
     enum class continuous_drop_off_enum
@@ -111,8 +119,8 @@ private:
     instead approximate and/or interpolated times. This field allows a GTFS producer to provide interpolated stop-times,
     while indicating that the times are approximate. Valid options are:
 
-    0 - Times are considered approximate.
-    1 or empty - Times are considered exact.*/
+        0 - Times are considered approximate.
+        1 or empty - Times are considered exact.*/
     enum class timepoint_enum
     {
         //TODO

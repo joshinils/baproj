@@ -32,16 +32,18 @@ private:
 
     /* Indicates the type of transportation used on a route. Valid options are:
 
-    0 - Tram, Streetcar, Light rail. Any light rail or street level system within a metropolitan area.
-    1 - Subway, Metro. Any underground rail system within a metropolitan area.
-    2 - Rail. Used for intercity or long-distance travel.
-    3 - Bus. Used for short- and long-distance bus routes.
-    4 - Ferry. Used for short- and long-distance boat service.
-    5 - Cable tram. Used for street-level rail cars where the cable runs beneath the vehicle, e.g., cable car in San Francisco.
-    6 - Aerial lift, suspended cable car (e.g., gondola lift, aerial tramway). Cable transport where cabins, cars, gondolas or open chairs are suspended by means of one or more cables.
-    7 - Funicular. Any rail system designed for steep inclines.
-    11 - Trolleybus. Electric buses that draw power from overhead wires using poles.
-    12 - Monorail. Railway in which the track consists of a single rail or a beam.*/
+        0 - Tram, Streetcar, Light rail. Any light rail or street level system within a metropolitan area.
+        1 - Subway, Metro. Any underground rail system within a metropolitan area.
+        2 - Rail. Used for intercity or long-distance travel.
+        3 - Bus. Used for short- and long-distance bus routes.
+        4 - Ferry. Used for short- and long-distance boat service.
+        5 - Cable tram. Used for street-level rail cars where the cable runs beneath the vehicle, e.g., cable car in
+            San Francisco.
+        6 - Aerial lift, suspended cable car (e.g., gondola lift, aerial tramway). Cable transport where cabins, cars,
+            gondolas or open chairs are suspended by means of one or more cables.
+        7 - Funicular. Any rail system designed for steep inclines.
+        11 - Trolleybus. Electric buses that draw power from overhead wires using poles.
+        12 - Monorail. Railway in which the track consists of a single rail or a beam.*/
     enum class route_type_enum
     {
         //TODO
@@ -68,10 +70,10 @@ private:
     /* Indicates whether a rider can board the transit vehicle anywhere along the vehicle’s travel path. The path is
     described by shapes.txt on every trip of the route. Valid options are:
 
-    0 - Continuous stopping pickup.
-    1 or empty - No continuous stopping pickup.
-    2 - Must phone an agency to arrange continuous stopping pickup.
-    3 - Must coordinate with a driver to arrange continuous stopping pickup.
+        0 - Continuous stopping pickup.
+        1 or empty - No continuous stopping pickup.
+        2 - Must phone an agency to arrange continuous stopping pickup.
+        3 - Must coordinate with a driver to arrange continuous stopping pickup.
 
     The default continuous pickup behavior defined in routes.txt can be overridden in stop_times.txt.*/
     enum class continuous_pickup_enum
@@ -83,10 +85,10 @@ private:
     /* Indicates whether a rider can alight from the transit vehicle at any point along the vehicle’s travel path. The
     path is described by shapes.txt on every trip of the route. Valid options are:
 
-    0- Continuous stopping drop-off.
-    1 or empty - No continuous stopping drop-off.
-    2 - Must phone an agency to arrange continuous stopping drop-off.
-    3 - Must coordinate with a driver to arrange continuous stopping drop-off.
+        0- Continuous stopping drop-off.
+        1 or empty - No continuous stopping drop-off.
+        2 - Must phone an agency to arrange continuous stopping drop-off.
+        3 - Must coordinate with a driver to arrange continuous stopping drop-off.
 
     The default continuous drop-off behavior defined in routes.txt can be overridden in stop_times.txt.*/
     enum class continuous_drop_off_enum

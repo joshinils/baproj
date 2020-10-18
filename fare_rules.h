@@ -42,6 +42,9 @@ private:
      c,GRT,...,5
     c,GRT,...,6
     c,GRT,...,7
-     Because all contains_id zones must be matched for the fare to apply, an itinerary that passes through zones 5 and 6 but not zone 7 would not have fare class ""c"". For more detail, see https://code.google.com/p/googletransitdatafeed/wiki/FareExamples in the GoogleTransitDataFeed project wiki.*/
+     Because all contains_id zones must be matched for the fare to apply, an itinerary that passes through
+        zones 5 and 6 but not zone 7 would not have fare class ""c"". For more detail, 
+        see https://code.google.com/p/googletransitdatafeed/wiki/FareExamples in the GoogleTransitDataFeed 
+        project wiki.*/
     /* ID referencing stops.zone_id */ int contains_id; // Optional
 };

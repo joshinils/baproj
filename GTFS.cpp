@@ -29,7 +29,7 @@ GTFS::GTFS(const std::string& folder)
         int agencyEmailIdx    = -1;
 
         int colIndex = 0;
-        for(auto e : agency.getHeader())
+        for(const auto& e : agency.getHeader())
         {
             if(!hasAgencyId && e == "agency_id")
             {
@@ -72,8 +72,8 @@ GTFS::GTFS(const std::string& folder)
             ++colIndex;
         }
 
-
         for(auto row : agency)
+        {
             this->agency.push_back(Agency(hasAgencyId ? std::stoi(row[agencyIdIdx]) : std::optional<int>(),
                                           row[agencyNameIdx],
                                           row[agencyUrlIdx],
@@ -82,6 +82,7 @@ GTFS::GTFS(const std::string& folder)
                                           hasAgencyPhone ? row[agencyPhoneIdx] : std::optional<std::string>(),
                                           hasAgencyFareUrl ? row[agencyFareUrlIdx] : std::optional<std::string>(),
                                           hasAgencyEmail ? row[agencyEmailIdx] : std::optional<std::string>()));
+        }
         for(auto row : this->agency) std::cout << row << std::endl;
     }
     else
@@ -94,7 +95,7 @@ GTFS::GTFS(const std::string& folder)
     {
         CSVReader stops(folder + "/stops.txt");
         stops.printCSV();
-        stops;
+        this->stops;
     }
     else
     {

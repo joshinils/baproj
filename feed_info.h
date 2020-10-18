@@ -20,9 +20,16 @@ private:
 
     To define another language, use the language field in translations.txt.
 
-    Multilingual datasets might be the default language with the original text in multiple languages. In such cases, use the ISO 639-2 language code mul in the feed_lang field. Provide a translation for each of the languages used in the dataset in translations.txt. If all of the original text in the dataset is in the same language, don't use mul.
+    Multilingual datasets might be the default language with the original text in multiple languages. 
+    In such cases, use the ISO 639-2 language code mul in the feed_lang field. Provide a translation for each of the 
+    languages used in the dataset in translations.txt. If all of the original text in the dataset is in the same 
+    language, don't use mul.
 
-    For example, a dataset in Switzerland might set the original stops.stop_name field populated with stop names in different languages. Each stop name is written in accordance with the dominant language in that stop’s geographic location. Stop names include Genève for the French-speaking city of Geneva, Zürich for the German-speaking city of Zurich, and Biel/Bienne for the bilingual city of Biel/Bienne. Set feed_lang=mul and provide the following translations in translations.txt:German: ""Genf,"" ""Zürich,"" and ""Biel""
+    For example, a dataset in Switzerland might set the original stops.stop_name field populated with stop names in 
+    different languages. Each stop name is written in accordance with the dominant language in that stop’s geographic 
+    location. Stop names include Genève for the French-speaking city of Geneva, Zürich for the German-speaking city of 
+    Zurich, and Biel/Bienne for the bilingual city of Biel/Bienne. Set feed_lang=mul and provide the following 
+    translations in translations.txt:German: ""Genf,"" ""Zürich,"" and ""Biel""
     French: ""Genève,"" ""Zurich,"" and ""Bienne""
     Italian: ""Ginevra,"" ""Zurigo,"" and ""Bienna""
     English: ""Geneva,"" ""Zurich,"" and ""Biel/Bienne""*/

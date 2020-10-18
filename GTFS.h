@@ -40,10 +40,12 @@ private:
     // Times that a vehicle arrives at and departs from stops for each trip.
     std::vector<Stop_times> stop_times;
 
-    // Conditionally required Service dates specified using a weekly schedule with start and end dates. This file is required unless all dates of service are defined in calendar_dates.
+    // Conditionally required Service dates specified using a weekly schedule with start and end dates.
+    // This file is required unless all dates of service are defined in calendar_dates.
     std::optional<std::vector<Calendar>> calendar;
 
-    // Conditionally required Exceptions for the services defined in the calendar. If calendar is omitted, then calendar_dates is required and must contain all dates of service.
+    // Conditionally required Exceptions for the services defined in the calendar.
+    // If calendar is omitted, then calendar_dates is required and must contain all dates of service.
     std::optional<std::vector<Calendar_dates>> calendar_dates;
 
     // Optional Fare information for a transit agency's routes.
@@ -55,7 +57,8 @@ private:
     // Optional Rules for mapping vehicle travel paths, sometimes referred to as route alignments.
     std::optional<std::vector<Shapes>> shapes;
 
-    // Optional Headway (time between trips) for headway-based service or a compressed representation of fixed-schedule service.
+    // Optional Headway (time between trips) for headway-based service 
+    // or a compressed representation of fixed-schedule service.
     std::optional<std::vector<Frequencies>> frequencies;
 
     // Optional Rules for making connections at transfer points between routes.
