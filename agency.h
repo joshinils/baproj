@@ -7,7 +7,14 @@
 class Agency
 {
 public:
-    Agency(const CSVReader::Row& header, const CSVReader::Row& row);
+    Agency(std::optional<int> agency_id,
+           std::string agency_name,
+           std::string agency_url,
+           std::string agency_timezone,
+           std::optional<std::string> agency_lang,
+           std::optional<std::string> agency_phone,
+           std::optional<std::string> agency_fare_url,
+           std::optional<std::string> agency_email);
     ~Agency();
 
     friend std::ostream& operator<<(std::ostream& ostr, const Agency& agency)
@@ -15,11 +22,11 @@ public:
         if(agency.agency_id.has_value()) ostr << "agency_id:" << agency.agency_id.value() << ", ";
         ostr << "agency_name:" << agency.agency_name << ", ";
         ostr << "agency_url:" << agency.agency_url << ", ";
-        ostr << "agency_timezone:" << agency.agency_timezone << ", ";
-        if(agency.agency_lang.has_value()) ostr << "agency_lang:" << agency.agency_lang.value() << ", ";
-        if(agency.agency_phone.has_value()) ostr << "agency_phone:" << agency.agency_phone.value() << ", ";
-        if(agency.agency_fare_url.has_value()) ostr << "agency_fare_url:" << agency.agency_fare_url.value() << ", ";
-        if(agency.agency_email.has_value()) ostr << "agency_email:" << agency.agency_email.value();
+        ostr << "agency_timezone:" << agency.agency_timezone;
+        if(agency.agency_lang.has_value()) ostr << ", agency_lang:" << agency.agency_lang.value();
+        if(agency.agency_phone.has_value()) ostr << ", agency_phone:" << agency.agency_phone.value();
+        if(agency.agency_fare_url.has_value()) ostr << ", agency_fare_url:" << agency.agency_fare_url.value();
+        if(agency.agency_email.has_value()) ostr << ", agency_email:" << agency.agency_email.value();
         return ostr;
     }
 
