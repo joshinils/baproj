@@ -36,7 +36,7 @@ public:
           std::optional<std::string> stop_timezone,
           wheelchair_boarding_enum wheelchair_boarding,
           std::optional<int> level_id,
-          std::optional<std::string> platform_code);
+          std::optional<std::string> platform_code = {});
     ~Stops();
 
     /* Identifies a stop, station, or station entrance.
@@ -253,7 +253,7 @@ private:
 
     ID referencing stops.stop_id
     Conditionally Required */
-    std::optional<int> parent_station;
+    std::optional<long long> parent_station;
 
     /* Timezone of the location. If the location has a parent station, it inherits the parent station’s timezone
      * instead of applying its own. Stations and parentless stops with empty stop_timezone inherit the timezone

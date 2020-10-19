@@ -24,6 +24,16 @@ public:
         auto end() const { return _fields.end(); }
         auto size() const { return _fields.size(); }
         auto operator[](int e) const { return _fields[e]; }
+        friend std::ostream& operator<<(std::ostream& ostr, const Row& r)
+        {
+            for(size_t i = 0; i < r._fields.size(); i++)
+            {
+                ostr << r._fields[i];
+                if(i < r._fields.size() + 1) ostr << ", ";
+            }
+
+            return ostr;
+        }
 
     private:
         std::string _line;

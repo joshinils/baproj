@@ -21,6 +21,15 @@
 class GTFS
 {
 public:
+    struct ColumnData
+    {
+    public:
+        bool isOptional = false;
+        bool exists     = false;
+        int index       = -1;
+    };
+
+
     GTFS(const std::string& folder);
     ~GTFS();
 
@@ -57,7 +66,7 @@ private:
     // Optional Rules for mapping vehicle travel paths, sometimes referred to as route alignments.
     std::optional<std::vector<Shapes>> shapes;
 
-    // Optional Headway (time between trips) for headway-based service 
+    // Optional Headway (time between trips) for headway-based service
     // or a compressed representation of fixed-schedule service.
     std::optional<std::vector<Frequencies>> frequencies;
 

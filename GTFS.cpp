@@ -1,6 +1,102 @@
 #include "GTFS.h"
 #include "CSVReader.h"
+#include <exception>
 #include <filesystem>
+#include <map>
+
+template<typename T>
+T makeValue(const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    const GTFS::ColumnData& cd = cdMap.at(name);
+    if(cd.exists) { return T(row[cd.index]); }
+    else if(cd.isOptional)
+    {
+        return T();
+    }
+    else
+    {
+        throw std::domain_error("required field \"" + name + "\" does not exist!");
+    }
+}
+
+template<>
+std::optional<int> makeValue<std::optional<int>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                 const std::string& name,
+                                                 const CSVReader::Row& row)
+{
+    const GTFS::ColumnData& cd = cdMap.at(name);
+    if(cd.exists)
+        if(row[cd.index].empty()) return std::optional<int>();
+        else
+            return std::stoi(row[cd.index]);
+    else if(cd.isOptional)
+        return std::optional<int>();
+    else
+        throw std::domain_error("required field \"" + name + "\" does not exist!");
+}
+
+template<>
+std::optional<long long> makeValue<std::optional<long long>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                             const std::string& name,
+                                                             const CSVReader::Row& row)
+{
+    const GTFS::ColumnData& cd = cdMap.at(name);
+    if(cd.exists)
+        if(row[cd.index].empty()) return std::optional<long long>();
+        else
+            return std::stoll(row[cd.index]);
+    else if(cd.isOptional)
+        return std::optional<long long>();
+    else
+        throw std::domain_error("required field \"" + name + "\" does not exist!");
+}
+
+template<>
+int makeValue<int>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                   const std::string& name,
+                   const CSVReader::Row& row)
+{
+    const GTFS::ColumnData& cd = cdMap.at(name);
+    if(cd.exists)
+        if(row[cd.index].empty()) return int();
+        else
+            return std::stoi(row[cd.index]);
+    else if(cd.isOptional)
+        return int();
+    else
+        throw std::domain_error("required field \"" + name + "\" does not exist!");
+}
+
+template<>
+Stops::location_type_enum makeValue<Stops::location_type_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                               const std::string& name,
+                                                               const CSVReader::Row& row)
+{
+    return Stops::location_type_enum(makeValue<int>(cdMap, name, row));
+}
+
+template<>
+Stops::wheelchair_boarding_enum makeValue<Stops::wheelchair_boarding_enum>(
+const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return Stops::wheelchair_boarding_enum(makeValue<int>(cdMap, name, row));
+}
+
+template<>
+std::optional<double> makeValue<std::optional<double>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                       const std::string& name,
+                                                       const CSVReader::Row& row)
+{
+    const GTFS::ColumnData& cd = cdMap.at(name);
+    if(cd.exists)
+        if(row[cd.index].empty()) return std::optional<double>();
+        else
+            return std::stod(row[cd.index]);
+    else if(cd.isOptional)
+        return std::optional<double>();
+    else
+        throw std::domain_error("required field \"" + name + "\" does not exist!");
+}
 
 GTFS::GTFS(const std::string& folder)
 {
@@ -9,75 +105,44 @@ GTFS::GTFS(const std::string& folder)
         CSVReader agency(folder + "/agency.txt");
         agency.printCSV();
 
-        bool hasAgencyId      = false;
-        bool hasAgencyLang    = false;
-        bool hasAgencyPhone   = false;
-        bool hasAgencyFareUrl = false;
-        bool hasAgencyEmail   = false;
+        std::map<std::string, ColumnData> cols;
 
-        int agencyIdIdx       = -1;
-        int agencyNameIdx     = -1;
-        int agencyUrlIdx      = -1;
-        int agencyTimezoneIdx = -1;
-        int agencyLangIdx     = -1;
-        int agencyPhoneIdx    = -1;
-        int agencyFareUrlIdx  = -1;
-        int agencyEmailIdx    = -1;
+        cols.emplace("agency_id", ColumnData{});
+        cols.emplace("agency_name", ColumnData{});
+        cols.emplace("agency_url", ColumnData{});
+        cols.emplace("agency_timezone", ColumnData{});
+        cols.emplace("agency_lang", ColumnData{});
+        cols.emplace("agency_phone", ColumnData{});
+        cols.emplace("agency_fare_url", ColumnData{});
+        cols.emplace("agency_email", ColumnData{});
+
+        cols["agency_id"].isOptional       = true;
+        cols["agency_name"].isOptional     = false;
+        cols["agency_url"].isOptional      = false;
+        cols["agency_timezone"].isOptional = false;
+        cols["agency_lang"].isOptional     = true;
+        cols["agency_phone"].isOptional    = true;
+        cols["agency_fare_url"].isOptional = true;
+        cols["agency_email"].isOptional    = true;
 
         int colIndex = 0;
-        for(const auto& e : agency.getHeader())
+        for(const auto& colName : agency.getHeader())
         {
-            if(!hasAgencyId && e == "agency_id")
-            {
-                hasAgencyId = true;
-                agencyIdIdx = colIndex;
-            }
-            else if(e == "agency_name")
-            {
-                agencyNameIdx = colIndex;
-            }
-            else if(e == "agency_url")
-            {
-                agencyUrlIdx = colIndex;
-            }
-            else if(e == "agency_timezone")
-            {
-                agencyTimezoneIdx = colIndex;
-            }
-            else if(!hasAgencyLang && e == "agency_lang")
-            {
-                hasAgencyLang = true;
-                agencyLangIdx = colIndex;
-            }
-            else if(!hasAgencyPhone && e == "agency_phone")
-            {
-                hasAgencyPhone = true;
-                agencyPhoneIdx = colIndex;
-            }
-            else if(!hasAgencyFareUrl && e == "agency_fare_url")
-            {
-                hasAgencyFareUrl = true;
-                agencyFareUrlIdx = colIndex;
-            }
-            else if(!hasAgencyEmail && e == "agency_email")
-            {
-                hasAgencyEmail = true;
-                agencyEmailIdx = colIndex;
-            }
-
+            cols[colName].exists = true;
+            cols[colName].index  = colIndex;
             ++colIndex;
         }
 
         for(auto row : agency)
         {
-            this->agency.push_back(Agency(hasAgencyId ? std::stoi(row[agencyIdIdx]) : std::optional<int>(),
-                                          row[agencyNameIdx],
-                                          row[agencyUrlIdx],
-                                          row[agencyTimezoneIdx],
-                                          hasAgencyLang ? row[agencyLangIdx] : std::optional<std::string>(),
-                                          hasAgencyPhone ? row[agencyPhoneIdx] : std::optional<std::string>(),
-                                          hasAgencyFareUrl ? row[agencyFareUrlIdx] : std::optional<std::string>(),
-                                          hasAgencyEmail ? row[agencyEmailIdx] : std::optional<std::string>()));
+            this->agency.emplace_back(Agency(makeValue<std::optional<int>>(cols, "agency_id", row),
+                                             makeValue<std::string>(cols, "agency_name", row),
+                                             makeValue<std::string>(cols, "agency_url", row),
+                                             makeValue<std::string>(cols, "agency_timezone", row),
+                                             makeValue<std::optional<std::string>>(cols, "agency_lang", row),
+                                             makeValue<std::optional<std::string>>(cols, "agency_phone", row),
+                                             makeValue<std::optional<std::string>>(cols, "agency_fare_url", row),
+                                             makeValue<std::optional<std::string>>(cols, "agency_email", row)));
         }
         for(auto row : this->agency) std::cout << row << std::endl;
     }
@@ -91,114 +156,65 @@ GTFS::GTFS(const std::string& folder)
         CSVReader stops(folder + "/stops.txt");
         stops.printCSV();
 
-        //int                               stop_id;
-        //std::optional<std::string>        stop_code;
-        //std::optional<std::string>        stop_name;
-        //std::optional<std::string>        stop_desc;
-        //std::optional<double>             stop_lat;
-        //std::optional<double>             stop_lon;
-        //std::optional<int>                zone_id;
-        //std::optional<std::string>        stop_url;
-        //Stops::location_type_enum         location_type;
-        //std::optional<int>                parent_station;
-        //std::optional<std::string>        stop_timezone;
-        //Stops::wheelchair_boarding_enum   wheelchair_boarding;
-        //std::optional<int>                level_id;
-        //std::optional<std::string>        platform_code;
+        std::map<std::string, ColumnData> cols;
 
-        bool hasStop_code           = false;
-        bool hasStop_name           = false;
-        bool hasStop_desc           = false;
-        bool hasStop_lat            = false;
-        bool hasStop_lon            = false;
-        bool hasZone_id             = false;
-        bool hasStop_url            = false;
-        bool hasLocation_type       = false;
-        bool hasParent_station      = false;
-        bool hasStop_timezone       = false;
-        bool hasWheelchair_boarding = false;
-        bool hasLevel_id            = false;
-        bool hasPlatform_code       = false;
+        cols.emplace("stop_id", ColumnData{});
+        cols.emplace("stop_code", ColumnData{});
+        cols.emplace("stop_name", ColumnData{});
+        cols.emplace("stop_desc", ColumnData{});
+        cols.emplace("stop_lat", ColumnData{});
+        cols.emplace("stop_lon", ColumnData{});
+        cols.emplace("zone_id", ColumnData{});
+        cols.emplace("stop_url", ColumnData{});
+        cols.emplace("location_type", ColumnData{});
+        cols.emplace("parent_station", ColumnData{});
+        cols.emplace("stop_timezone", ColumnData{});
+        cols.emplace("wheelchair_boarding", ColumnData{});
+        cols.emplace("level_id", ColumnData{});
+        cols.emplace("platform_code", ColumnData{});
 
-        int stop_idIdx             = -1;
-        int stop_codeIdx           = -1;
-        int stop_nameIdx           = -1;
-        int stop_descIdx           = -1;
-        int stop_latIdx            = -1;
-        int stop_lonIdx            = -1;
-        int zone_idIdx             = -1;
-        int stop_urlIdx            = -1;
-        int location_typeIdx       = -1;
-        int parent_stationIdx      = -1;
-        int stop_timezoneIdx       = -1;
-        int wheelchair_boardingIdx = -1;
-        int level_idIdx            = -1;
-        int platform_codeIdx       = -1;
+        cols["stop_id"].isOptional             = false;
+        cols["stop_code"].isOptional           = true;
+        cols["stop_name"].isOptional           = true;
+        cols["stop_desc"].isOptional           = true;
+        cols["stop_lat"].isOptional            = true;
+        cols["stop_lon"].isOptional            = true;
+        cols["zone_id"].isOptional             = true;
+        cols["stop_url"].isOptional            = true;
+        cols["location_type"].isOptional       = true;
+        cols["parent_station"].isOptional      = true;
+        cols["stop_timezone"].isOptional       = true;
+        cols["wheelchair_boarding"].isOptional = true;
+        cols["level_id"].isOptional            = true;
+        cols["platform_code"].isOptional       = true;
 
         int colIndex = 0;
-        for(const auto& e : stops.getHeader())
+        for(const auto& colName : stops.getHeader())
         {
-            if(e == "stop_id") { stop_idIdx = colIndex; }
-            // TODO adjust copy paste to stops from agency:
-
-            // else if(e == "stops_name")
-            // {
-            //     stopsNameIdx = colIndex;
-            // }
-            // else if(e == "stops_url")
-            // {
-            //     stopsUrlIdx = colIndex;
-            // }
-            // else if(e == "stops_timezone")
-            // {
-            //     stopsTimezoneIdx = colIndex;
-            // }
-            // else if(!hasStopsLang && e == "stops_lang")
-            // {
-            //     hasStopsLang = true;
-            //     stopsLangIdx = colIndex;
-            // }
-            // else if(!hasStopsPhone && e == "stops_phone")
-            // {
-            //     hasStopsPhone = true;
-            //     stopsPhoneIdx = colIndex;
-            // }
-            // else if(!hasStopsFareUrl && e == "stops_fare_url")
-            // {
-            //     hasStopsFareUrl = true;
-            //     stopsFareUrlIdx = colIndex;
-            // }
-            // else if(!hasStopsEmail && e == "stops_email")
-            // {
-            //     hasStopsEmail = true;
-            //     stopsEmailIdx = colIndex;
-            // }
-
+            cols[colName].exists = true;
+            cols[colName].index  = colIndex;
             ++colIndex;
         }
 
         for(auto row : stops)
         {
-            this->stops.emplace_back(Stops(std::stoi(row[stop_idIdx]),
-                                           hasStop_code ? row[stop_codeIdx] : std::optional<std::string>(),
-                                           hasStop_name ? row[stop_nameIdx] : std::optional<std::string>(),
-                                           hasStop_desc ? row[stop_descIdx] : std::optional<std::string>(),
-                                           hasStop_lat ? std::stod(row[stop_latIdx]) : std::optional<double>(),
-                                           hasStop_lon ? std::stod(row[stop_lonIdx]) : std::optional<double>(),
-                                           hasZone_id ? std::stoi(row[zone_idIdx]) : std::optional<int>(),
-                                           hasStop_url ? row[stop_urlIdx] : std::optional<std::string>(),
-                                           hasLocation_type ? Stops::location_type_enum(stoi(row[location_typeIdx]))
-                                                            : Stops::location_type_enum::Unset,
-                                           hasParent_station ? std::stoi(row[parent_stationIdx]) : std::optional<int>(),
-                                           hasStop_timezone ? row[stop_timezoneIdx] : std::optional<std::string>(),
-                                           hasWheelchair_boarding
-                                           ? Stops::wheelchair_boarding_enum(std::stoi(row[wheelchair_boardingIdx]))
-                                           : Stops::wheelchair_boarding_enum::Unset,
-                                           hasLevel_id ? std::stoi(row[level_idIdx]) : std::optional<int>(),
-                                           hasPlatform_code ? row[platform_codeIdx] : std::optional<std::string>()));
+            this->stops.emplace_back(Stops(makeValue<int>(cols, "stop_id", row),
+                                           makeValue<std::optional<std::string>>(cols, "stop_code", row),
+                                           makeValue<std::optional<std::string>>(cols, "stop_name", row),
+                                           makeValue<std::optional<std::string>>(cols, "stop_desc", row),
+                                           makeValue<std::optional<double>>(cols, "stop_lat", row),
+                                           makeValue<std::optional<double>>(cols, "stop_lon", row),
+                                           makeValue<std::optional<int>>(cols, "zone_id", row),
+                                           makeValue<std::optional<std::string>>(cols, "stop_url", row),
+                                           makeValue<Stops::location_type_enum>(cols, "location_type", row),
+                                           makeValue<std::optional<long long>>(cols, "parent_station", row),
+                                           makeValue<std::optional<std::string>>(cols, "stop_timezone", row),
+                                           makeValue<Stops::wheelchair_boarding_enum>(cols, "wheelchair_boarding", row),
+                                           makeValue<std::optional<int>>(cols, "level_id", row),
+                                           makeValue<std::optional<std::string>>(cols, "platform_code", row)));
+            //TODO write output operator for stops
+            //for(auto row : this->stops) std::cout << row << std::endl;
         }
-        //TODO write output operator for stops
-        //for(auto row : this->stops) std::cout << row << std::endl;
     }
     else
     {
