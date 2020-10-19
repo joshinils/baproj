@@ -1,7 +1,7 @@
 #pragma once
+#include <iostream>
 #include <optional>
 #include <string>
-
 class Stops
 {
 public:
@@ -23,7 +23,7 @@ public:
         WheelchairInAccessible = 2, // Wheelchair boarding is not possible at this stop.
     };
 
-    Stops(int stop_id,
+    Stops(std::string stop_id,
           std::optional<std::string> stop_code,
           std::optional<std::string> stop_name,
           std::optional<std::string> stop_desc,
@@ -32,7 +32,7 @@ public:
           std::optional<int> zone_id,
           std::optional<std::string> stop_url,
           location_type_enum location_type,
-          std::optional<int> parent_station,
+          std::optional<long long> parent_station,
           std::optional<std::string> stop_timezone,
           wheelchair_boarding_enum wheelchair_boarding,
           std::optional<int> level_id,
@@ -43,7 +43,7 @@ public:
 
     The term ""station entrance"" refers to both station entrances and station exits. Stops,
     stations or station entrances are collectively referred to as locations. Multiple routes may use the same stop.*/
-    int getStop_id() const { return stop_id; }
+    std::string getStop_id() const { return stop_id; }
 
     /* Short text or a number that identifies the location for riders. These codes are often used in phone-based
      * transit information systems or printed on signage to make it easier for riders to get information for a
@@ -166,12 +166,32 @@ public:
      * into other languages. */
     std::optional<std::string> getPlatform_code() const { return platform_code; }
 
+    friend std::ostream& operator<<(std::ostream& ostr, const Stops& stops)
+    {
+        ostr << "stop_id: " << stops.stop_id;
+        if(stops.stop_code.has_value()) ostr << ", stop_code: " << stops.stop_code.value();
+        if(stops.stop_name.has_value()) ostr << ", stop_name: " << stops.stop_name.value();
+        if(stops.stop_desc.has_value()) ostr << ", stop_desc: " << stops.stop_desc.value();
+        if(stops.stop_lat.has_value()) ostr << ", stop_lat: " << stops.stop_lat.value();
+        if(stops.stop_lon.has_value()) ostr << ", stop_lon: " << stops.stop_lon.value();
+        if(stops.zone_id.has_value()) ostr << ", zone_id: " << stops.zone_id.value();
+        if(stops.stop_url.has_value()) ostr << ", stop_url: " << stops.stop_url.value();
+        ostr << ", location_type: " << static_cast<int>(stops.location_type);
+        if(stops.parent_station.has_value()) ostr << ", parent_station: " << stops.parent_station.value();
+        if(stops.stop_timezone.has_value()) ostr << ", stop_timezone: " << stops.stop_timezone.value();
+        ostr << ", wheelchair_boarding: " << static_cast<int>(stops.wheelchair_boarding);
+        if(stops.level_id.has_value()) ostr << ", level_id: " << stops.level_id.value();
+        if(stops.platform_code.has_value()) ostr << ", platform_code: " << stops.platform_code.value();
+
+        return ostr;
+    }
+
 private:
     /* Identifies a stop, station, or station entrance.
 
     The term ""station entrance"" refers to both station entrances and station exits. Stops,
     stations or station entrances are collectively referred to as locations. Multiple routes may use the same stop.*/
-    int stop_id;
+    std::string stop_id;
 
     /* Short text or a number that identifies the location for riders. These codes are often used in phone-based
      * transit information systems or printed on signage to make it easier for riders to get information for a

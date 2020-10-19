@@ -9,7 +9,7 @@ public:
 
 private:
     /* Identifies a route. */
-    /* ID referencing routes.route_id */ int route_id; // Required
+    /* ID referencing routes.route_id */ std::string route_id; // Required
 
     /* Identifies a set of dates when service is available for one or more routes. */
     /* ID referencing calendar.service_id or calendar_dates.service_id */ int service_id; // Required

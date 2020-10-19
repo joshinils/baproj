@@ -1,6 +1,6 @@
 #include "stops.h"
 
-Stops::Stops(int stop_id,
+Stops::Stops(std::string stop_id,
              std::optional<std::string> stop_code,
              std::optional<std::string> stop_name,
              std::optional<std::string> stop_desc,
@@ -9,7 +9,7 @@ Stops::Stops(int stop_id,
              std::optional<int> zone_id,
              std::optional<std::string> stop_url,
              location_type_enum location_type,
-             std::optional<int> parent_station,
+             std::optional<long long> parent_station,
              std::optional<std::string> stop_timezone,
              wheelchair_boarding_enum wheelchair_boarding,
              std::optional<int> level_id,

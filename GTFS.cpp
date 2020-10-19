@@ -36,6 +36,22 @@ std::optional<int> makeValue<std::optional<int>>(const std::map<std::string, GTF
 }
 
 template<>
+std::optional<unsigned int> makeValue<std::optional<unsigned int>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                                   const std::string& name,
+                                                                   const CSVReader::Row& row)
+{
+    const GTFS::ColumnData& cd = cdMap.at(name);
+    if(cd.exists)
+        if(row[cd.index].empty()) return std::optional<unsigned int>();
+        else
+            return std::stoi(row[cd.index]);
+    else if(cd.isOptional)
+        return std::optional<unsigned int>();
+    else
+        throw std::domain_error("required field \"" + name + "\" does not exist!");
+}
+
+template<>
 std::optional<long long> makeValue<std::optional<long long>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
                                                              const std::string& name,
                                                              const CSVReader::Row& row)
@@ -68,6 +84,17 @@ int makeValue<int>(const std::map<std::string, GTFS::ColumnData>& cdMap,
 }
 
 template<>
+unsigned int makeValue<unsigned int>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                     const std::string& name,
+                                     const CSVReader::Row& row)
+{
+    const GTFS::ColumnData& cd = cdMap.at(name);
+    if(cd.exists && !row[cd.index].empty() && !cd.isOptional) return std::stoul(row[cd.index]);
+    else
+        throw std::domain_error("required field \"" + name + "\" does not exist!");
+}
+
+template<>
 Stops::location_type_enum makeValue<Stops::location_type_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
                                                                const std::string& name,
                                                                const CSVReader::Row& row)
@@ -80,6 +107,28 @@ Stops::wheelchair_boarding_enum makeValue<Stops::wheelchair_boarding_enum>(
 const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     return Stops::wheelchair_boarding_enum(makeValue<int>(cdMap, name, row));
+}
+
+template<>
+Routes::route_type_enum makeValue<Routes::route_type_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                           const std::string& name,
+                                                           const CSVReader::Row& row)
+{
+    return Routes::route_type_enum(makeValue<int>(cdMap, name, row));
+}
+
+template<>
+Routes::continuous_pickup_enum makeValue<Routes::continuous_pickup_enum>(
+const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return Routes::continuous_pickup_enum(makeValue<int>(cdMap, name, row));
+}
+
+template<>
+Routes::continuous_drop_off_enum makeValue<Routes::continuous_drop_off_enum>(
+const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return Routes::continuous_drop_off_enum(makeValue<int>(cdMap, name, row));
 }
 
 template<>
@@ -135,7 +184,7 @@ GTFS::GTFS(const std::string& folder)
 
         for(auto row : agency)
         {
-            this->agency.emplace_back(Agency(makeValue<std::optional<int>>(cols, "agency_id", row),
+            this->agency.emplace_back(Agency(makeValue<std::optional<std::string>>(cols, "agency_id", row),
                                              makeValue<std::string>(cols, "agency_name", row),
                                              makeValue<std::string>(cols, "agency_url", row),
                                              makeValue<std::string>(cols, "agency_timezone", row),
@@ -198,7 +247,7 @@ GTFS::GTFS(const std::string& folder)
 
         for(auto row : stops)
         {
-            this->stops.emplace_back(Stops(makeValue<int>(cols, "stop_id", row),
+            this->stops.emplace_back(Stops(makeValue<std::string>(cols, "stop_id", row),
                                            makeValue<std::optional<std::string>>(cols, "stop_code", row),
                                            makeValue<std::optional<std::string>>(cols, "stop_name", row),
                                            makeValue<std::optional<std::string>>(cols, "stop_desc", row),
@@ -212,9 +261,8 @@ GTFS::GTFS(const std::string& folder)
                                            makeValue<Stops::wheelchair_boarding_enum>(cols, "wheelchair_boarding", row),
                                            makeValue<std::optional<int>>(cols, "level_id", row),
                                            makeValue<std::optional<std::string>>(cols, "platform_code", row)));
-            //TODO write output operator for stops
-            //for(auto row : this->stops) std::cout << row << std::endl;
         }
+        for(auto row : this->stops) std::cout << row << std::endl;
     }
     else
     {
@@ -226,7 +274,71 @@ GTFS::GTFS(const std::string& folder)
     {
         CSVReader routes(folder + "/routes.txt");
         routes.printCSV();
-        routes;
+
+        std::map<std::string, ColumnData> cols;
+
+        cols.emplace("route_id", ColumnData{});
+        cols.emplace("agency_id", ColumnData{});
+        cols.emplace("route_short_name", ColumnData{});
+        cols.emplace("route_long_name", ColumnData{});
+        cols.emplace("route_desc", ColumnData{});
+        cols.emplace("route_type", ColumnData{});
+        cols.emplace("route_url", ColumnData{});
+        cols.emplace("route_color", ColumnData{});
+        cols.emplace("route_text_color", ColumnData{});
+        cols.emplace("route_sort_order", ColumnData{});
+        cols.emplace("continuous_pickup", ColumnData{});
+        cols.emplace("continuous_drop_off", ColumnData{});
+
+        cols["route_id"].isOptional            = false;
+        cols["agency_id"].isOptional           = true;
+        cols["route_short_name"].isOptional    = true;
+        cols["route_long_name"].isOptional     = true;
+        cols["route_desc"].isOptional          = true;
+        cols["route_type"].isOptional          = false;
+        cols["route_url"].isOptional           = true;
+        cols["route_color"].isOptional         = true;
+        cols["route_text_color"].isOptional    = true;
+        cols["route_sort_order"].isOptional    = true;
+        cols["continuous_pickup"].isOptional   = true;
+        cols["continuous_drop_off"].isOptional = true;
+
+        int colIndex = 0;
+        for(const auto& colName : routes.getHeader())
+        {
+            cols[colName].exists = true;
+            cols[colName].index  = colIndex;
+            ++colIndex;
+        }
+
+        for(auto row : routes)
+        {
+            // std::optional<std::string>
+            // std::optional<std::string>
+            // std::optional<std::string>
+            // route_type_enum
+            // std::optional<std::string>
+            // std::optional<std::string>
+            // std::optional<std::string>
+            // std::optional<unsigned int>
+            // continuous_pickup_enum
+            // continuous_drop_off_enum
+
+            this->routes.emplace_back(
+            Routes(makeValue<std::string>(cols, "route_id", row),
+                   makeValue<std::optional<int>>(cols, "agency_id", row),
+                   makeValue<std::optional<std::string>>(cols, "route_short_name", row),
+                   makeValue<std::optional<std::string>>(cols, "route_long_name", row),
+                   makeValue<std::optional<std::string>>(cols, "route_desc", row),
+                   makeValue<Routes::route_type_enum>(cols, "route_type", row),
+                   makeValue<std::optional<std::string>>(cols, "route_url", row),
+                   makeValue<std::optional<std::string>>(cols, "route_color", row),
+                   makeValue<std::optional<std::string>>(cols, "route_text_color", row),
+                   makeValue<std::optional<unsigned int>>(cols, "route_sort_order", row),
+                   makeValue<Routes::continuous_pickup_enum>(cols, "continuous_pickup", row),
+                   makeValue<Routes::continuous_drop_off_enum>(cols, "continuous_drop_off", row)));
+        }
+        for(auto row : this->routes) std::cout << row << std::endl;
     }
     else
     {
