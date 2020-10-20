@@ -255,7 +255,8 @@ GTFS::GTFS(const std::string& folder)
                                              makeValue<std::optional<std::string>>(cols, "agency_fare_url", row),
                                              makeValue<std::optional<std::string>>(cols, "agency_email", row)));
         }
-        for(auto row : this->agency) std::cout << row << std::endl;
+        for(size_t i = 0; i < this->agency.size() && i < this->maxPrint; i++)
+        { std::cout << this->agency[i] << std::endl; }
     }
     else
     {
@@ -315,7 +316,7 @@ GTFS::GTFS(const std::string& folder)
                                            makeValue<std::optional<std::string>>(cols, "stop_desc", row),
                                            makeValue<std::optional<double>>(cols, "stop_lat", row),
                                            makeValue<std::optional<double>>(cols, "stop_lon", row),
-                                           makeValue<std::optional<int>>(cols, "zone_id", row),
+                                           makeValue<std::optional<std::string>>(cols, "zone_id", row),
                                            makeValue<std::optional<std::string>>(cols, "stop_url", row),
                                            makeValue<Stops::location_type_enum>(cols, "location_type", row),
                                            makeValue<std::optional<long long>>(cols, "parent_station", row),
@@ -324,7 +325,8 @@ GTFS::GTFS(const std::string& folder)
                                            makeValue<std::optional<int>>(cols, "level_id", row),
                                            makeValue<std::optional<std::string>>(cols, "platform_code", row)));
         }
-        for(auto row : this->stops) std::cout << row << std::endl;
+        for(size_t i = 0; i < this->stops.size() && i < this->maxPrint; i++)
+        { std::cout << this->stops[i] << std::endl; }
     }
     else
     {
@@ -388,7 +390,9 @@ GTFS::GTFS(const std::string& folder)
                    makeValue<Routes::continuous_pickup_enum>(cols, "continuous_pickup", row),
                    makeValue<Routes::continuous_drop_off_enum>(cols, "continuous_drop_off", row)));
         }
-        for(auto row : this->routes) std::cout << row << std::endl;
+
+        for(size_t i = 0; i < this->routes.size() && i < this->maxPrint; i++)
+        { std::cout << this->routes[i] << std::endl; }
     }
     else
     {
@@ -446,7 +450,8 @@ GTFS::GTFS(const std::string& folder)
                   makeValue<Trips::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
                   makeValue<Trips::bikes_allowed_enum>(cols, "bikes_allowed", row)));
         }
-        for(auto row : this->trips) std::cout << row << std::endl;
+        for(size_t i = 0; i < this->trips.size() && i < this->maxPrint; i++)
+        { std::cout << this->trips[i] << std::endl; }
     }
     else
     {
@@ -510,7 +515,8 @@ GTFS::GTFS(const std::string& folder)
                        makeValue<std::optional<double>>(cols, "shape_dist_traveled", row),
                        makeValue<Stop_times::timepoint_enum>(cols, "timepoint", row)));
         }
-        for(auto row : this->stop_times) std::cout << row << std::endl;
+        for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)
+        { std::cout << this->stop_times[i] << std::endl; }
     }
     else
     {

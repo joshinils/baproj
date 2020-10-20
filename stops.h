@@ -29,7 +29,7 @@ public:
           std::optional<std::string> stop_desc,
           std::optional<double> stop_lat,
           std::optional<double> stop_lon,
-          std::optional<int> zone_id,
+          std::optional<std::string> zone_id,
           std::optional<std::string> stop_url,
           location_type_enum location_type,
           std::optional<long long> parent_station,
@@ -91,7 +91,7 @@ public:
     /* Identifies the fare zone for a stop. This field is required if providing fare information using fare_rules.txt,
      * otherwise it is optional. If this record represents a station or station entrance, the zone_id is ignored.
      * Conditionally Required */
-    std::optional<int> getZone_id() const { return zone_id; }
+    std::optional<std::string> getZone_id() const { return zone_id; }
 
     /* URL of a web page about the location. This should be different from the agency.agency_url and the
      * routes.route_url field values. */
@@ -239,7 +239,7 @@ private:
     /* Identifies the fare zone for a stop. This field is required if providing fare information using fare_rules.txt,
      * otherwise it is optional. If this record represents a station or station entrance, the zone_id is ignored.
      * Conditionally Required */
-    std::optional<int> zone_id;
+    std::optional<std::string> zone_id;
 
     /* URL of a web page about the location. This should be different from the agency.agency_url and the
      * routes.route_url field values. */

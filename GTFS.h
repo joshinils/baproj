@@ -81,4 +81,6 @@ private:
 
     // Conditionally required Dataset metadata, including publisher, version, and expiration information.
     std::optional<std::vector<Feed_info>> feed_info;
+
+    const int maxPrint = 10;
 };
