@@ -193,7 +193,6 @@ Stop_times::timepoint_enum makeValue<Stop_times::timepoint_enum>(const std::map<
     return Stop_times::timepoint_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
-
 template<>
 std::optional<double> makeValue<std::optional<double>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
                                                        const std::string& name,
@@ -332,7 +331,6 @@ GTFS::GTFS(const std::string& folder)
         throw std::string(folder + "/stops.txt not found!");
     }
 
-
     if(std::filesystem::exists(folder + "/routes.txt"))
     {
         CSVReader csvData(folder + "/routes.txt");
@@ -397,7 +395,6 @@ GTFS::GTFS(const std::string& folder)
         throw std::string(folder + "/routes.txt not found!");
     }
 
-
     if(std::filesystem::exists(folder + "/trips.txt"))
     {
         CSVReader csvData(folder + "/trips.txt");
@@ -455,7 +452,6 @@ GTFS::GTFS(const std::string& folder)
     {
         throw std::string(folder + "/trips.txt not found!");
     }
-
 
     if(std::filesystem::exists(folder + "/stop_times.txt"))
     {
@@ -521,76 +517,115 @@ GTFS::GTFS(const std::string& folder)
         throw std::string(folder + "/stop_times.txt not found!");
     }
 
-
     if(std::filesystem::exists(folder + "/calendar.txt"))
     {
-        CSVReader calendar(folder + "/calendar.txt");
-        calendar.printCSV();
-        calendar;
+        CSVReader csvData(folder + "/calendar.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/calendar.txt" + " not found\n";
     }
 
     if(std::filesystem::exists(folder + "/calendar_dates.txt"))
     {
-        CSVReader calendar_dates(folder + "/calendar_dates.txt");
-        calendar_dates.printCSV();
-        calendar_dates;
+        CSVReader csvData(folder + "/calendar_dates.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/calendar_dates.txt" + " not found\n";
     }
 
-    if(std::filesystem::exists(folder + "/fare_rules.txt"))
-    {
-        CSVReader fare_rules(folder + "/fare_rules.txt");
-        fare_rules.printCSV();
-        fare_rules;
-    }
+    // if(std::filesystem::exists(folder + "/fare_rules.txt"))
+    // {
+    //     CSVReader csvData(folder + "/fare_rules.txt");
+    //     csvData.printCSV();
+    //     csvData;
+    // }
+    // else
+    // {
+    //     std::cout << "optional file " + folder + "/fare_rules.txt" + " not found\n";
+    // }
 
-    if(std::filesystem::exists(folder + "/fare_attributes.txt"))
-    {
-        CSVReader fare_attributes(folder + "/fare_attributes.txt");
-        fare_attributes.printCSV();
-        fare_attributes;
-    }
+    // if(std::filesystem::exists(folder + "/fare_attributes.txt"))
+    // {
+    //     CSVReader csvData(folder + "/fare_attributes.txt");
+    //     csvData.printCSV();
+    //     csvData;
+    // }
+    // else
+    // {
+    //     std::cout << "optional file " + folder + "/fare_attributes.txt" + " not found\n";
+    // }
 
     if(std::filesystem::exists(folder + "/shapes.txt"))
     {
-        CSVReader shapes(folder + "/shapes.txt");
-        shapes.printCSV();
-        shapes;
+        CSVReader csvData(folder + "/shapes.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/shapes.txt" + " not found\n";
     }
 
     if(std::filesystem::exists(folder + "/frequencies.txt"))
     {
-        CSVReader frequencies(folder + "/frequencies.txt");
-        frequencies.printCSV();
-        frequencies;
+        CSVReader csvData(folder + "/frequencies.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/frequencies.txt" + " not found\n";
     }
 
     if(std::filesystem::exists(folder + "/transfers.txt"))
     {
-        CSVReader transfers(folder + "/transfers.txt");
-        transfers.printCSV();
-        transfers;
+        CSVReader csvData(folder + "/transfers.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/transfers.txt" + " not found\n";
     }
 
     if(std::filesystem::exists(folder + "/pathways.txt"))
     {
-        CSVReader pathways(folder + "/pathways.txt");
-        pathways.printCSV();
-        pathways;
+        CSVReader csvData(folder + "/pathways.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/pathways.txt" + " not found\n";
     }
 
-    if(std::filesystem::exists(folder + "/levels.txt"))
-    {
-        CSVReader levels(folder + "/levels.txt");
-        levels.printCSV();
-        levels;
-    }
+    // if(std::filesystem::exists(folder + "/levels.txt"))
+    // {
+    //     CSVReader csvData(folder + "/levels.txt");
+    //     csvData.printCSV();
+    //     csvData;
+    // }
+    // else
+    // {
+    //     std::cout << "optional file " + folder + "/levels.txt" + " not found\n";
+    // }
 
-    if(std::filesystem::exists(folder + "/feed_info.txt"))
-    {
-        CSVReader feed_info(folder + "/feed_info.txt");
-        feed_info.printCSV();
-        feed_info;
-    }
+    // if(std::filesystem::exists(folder + "/feed_info.txt"))
+    // {
+    //     CSVReader csvData(folder + "/feed_info.txt");
+    //     csvData.printCSV();
+    //     csvData;
+    // }
+    // else
+    // {
+    //     std::cout << "optional file " + folder + "/feed_info.txt" + " not found\n";
+    // }
 }
 
 GTFS::~GTFS() { }
