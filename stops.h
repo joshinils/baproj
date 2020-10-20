@@ -7,7 +7,7 @@ class Stops
 public:
     enum class location_type_enum
     {
-        Unset, // this field is optional
+        Unset        = -1, // this field is optional
         Stop         = 0, //(or empty): A location where passengers board or disembark from a transit vehicle.
         Station      = 1, // A physical structure or area that contains one or more platform.
         EntranceExit = 2, // A location where passengers can enter or exit a station from the street.
@@ -17,7 +17,7 @@ public:
 
     enum class wheelchair_boarding_enum
     {
-        Unset, // this field is optional
+        Unset                  = -1, // this field is optional
         NoInfo_orInherited     = 0, // Stop will inherit its wheelchair_boarding behavior from the parent station
         WheelchairAccessible   = 1, // Stop is wheelchair accessible.
         WheelchairInAccessible = 2, // Wheelchair boarding is not possible at this stop.

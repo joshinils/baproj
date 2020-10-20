@@ -99,14 +99,14 @@ Stops::location_type_enum makeValue<Stops::location_type_enum>(const std::map<st
                                                                const std::string& name,
                                                                const CSVReader::Row& row)
 {
-    return Stops::location_type_enum(makeValue<int>(cdMap, name, row));
+    return Stops::location_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
 Stops::wheelchair_boarding_enum makeValue<Stops::wheelchair_boarding_enum>(
 const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
-    return Stops::wheelchair_boarding_enum(makeValue<int>(cdMap, name, row));
+    return Stops::wheelchair_boarding_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
@@ -114,21 +114,47 @@ Routes::route_type_enum makeValue<Routes::route_type_enum>(const std::map<std::s
                                                            const std::string& name,
                                                            const CSVReader::Row& row)
 {
-    return Routes::route_type_enum(makeValue<int>(cdMap, name, row));
+    auto rv = makeValue<std::optional<int>>(cdMap, name, row);
+    if(rv.has_value()) return Routes::route_type_enum(rv.value());
+    else
+        throw std::domain_error("required field \"" + name + "\" does not exist!");
 }
 
 template<>
 Routes::continuous_pickup_enum makeValue<Routes::continuous_pickup_enum>(
 const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
-    return Routes::continuous_pickup_enum(makeValue<int>(cdMap, name, row));
+    return Routes::continuous_pickup_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
 Routes::continuous_drop_off_enum makeValue<Routes::continuous_drop_off_enum>(
 const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
-    return Routes::continuous_drop_off_enum(makeValue<int>(cdMap, name, row));
+    return Routes::continuous_drop_off_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+Trips::direction_id_enum makeValue<Trips::direction_id_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                             const std::string& name,
+                                                             const CSVReader::Row& row)
+{
+    return Trips::direction_id_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+Trips::wheelchair_accessible_enum makeValue<Trips::wheelchair_accessible_enum>(
+const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return Trips::wheelchair_accessible_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+Trips::bikes_allowed_enum makeValue<Trips::bikes_allowed_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                               const std::string& name,
+                                                               const CSVReader::Row& row)
+{
+    return Trips::bikes_allowed_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
@@ -151,8 +177,8 @@ GTFS::GTFS(const std::string& folder)
 {
     if(std::filesystem::exists(folder + "/agency.txt"))
     {
-        CSVReader agency(folder + "/agency.txt");
-        agency.printCSV();
+        CSVReader csvData(folder + "/agency.txt");
+        csvData.printCSV();
 
         std::map<std::string, ColumnData> cols;
 
@@ -175,16 +201,16 @@ GTFS::GTFS(const std::string& folder)
         cols["agency_email"].isOptional    = true;
 
         int colIndex = 0;
-        for(const auto& colName : agency.getHeader())
+        for(const auto& colName : csvData.getHeader())
         {
             cols[colName].exists = true;
             cols[colName].index  = colIndex;
             ++colIndex;
         }
 
-        for(auto row : agency)
+        for(auto row : csvData)
         {
-            this->agency.emplace_back(Agency(makeValue<std::optional<std::string>>(cols, "agency_id", row),
+            this->agency.emplace_back(Agency(makeValue<std::optional<int>>(cols, "agency_id", row),
                                              makeValue<std::string>(cols, "agency_name", row),
                                              makeValue<std::string>(cols, "agency_url", row),
                                              makeValue<std::string>(cols, "agency_timezone", row),
@@ -202,8 +228,8 @@ GTFS::GTFS(const std::string& folder)
 
     if(std::filesystem::exists(folder + "/stops.txt"))
     {
-        CSVReader stops(folder + "/stops.txt");
-        stops.printCSV();
+        CSVReader csvData(folder + "/stops.txt");
+        csvData.printCSV();
 
         std::map<std::string, ColumnData> cols;
 
@@ -238,14 +264,14 @@ GTFS::GTFS(const std::string& folder)
         cols["platform_code"].isOptional       = true;
 
         int colIndex = 0;
-        for(const auto& colName : stops.getHeader())
+        for(const auto& colName : csvData.getHeader())
         {
             cols[colName].exists = true;
             cols[colName].index  = colIndex;
             ++colIndex;
         }
 
-        for(auto row : stops)
+        for(auto row : csvData)
         {
             this->stops.emplace_back(Stops(makeValue<std::string>(cols, "stop_id", row),
                                            makeValue<std::optional<std::string>>(cols, "stop_code", row),
@@ -272,8 +298,8 @@ GTFS::GTFS(const std::string& folder)
 
     if(std::filesystem::exists(folder + "/routes.txt"))
     {
-        CSVReader routes(folder + "/routes.txt");
-        routes.printCSV();
+        CSVReader csvData(folder + "/routes.txt");
+        csvData.printCSV();
 
         std::map<std::string, ColumnData> cols;
 
@@ -304,26 +330,15 @@ GTFS::GTFS(const std::string& folder)
         cols["continuous_drop_off"].isOptional = true;
 
         int colIndex = 0;
-        for(const auto& colName : routes.getHeader())
+        for(const auto& colName : csvData.getHeader())
         {
             cols[colName].exists = true;
             cols[colName].index  = colIndex;
             ++colIndex;
         }
 
-        for(auto row : routes)
+        for(auto row : csvData)
         {
-            // std::optional<std::string>
-            // std::optional<std::string>
-            // std::optional<std::string>
-            // route_type_enum
-            // std::optional<std::string>
-            // std::optional<std::string>
-            // std::optional<std::string>
-            // std::optional<unsigned int>
-            // continuous_pickup_enum
-            // continuous_drop_off_enum
-
             this->routes.emplace_back(
             Routes(makeValue<std::string>(cols, "route_id", row),
                    makeValue<std::optional<int>>(cols, "agency_id", row),
@@ -348,9 +363,56 @@ GTFS::GTFS(const std::string& folder)
 
     if(std::filesystem::exists(folder + "/trips.txt"))
     {
-        CSVReader trips(folder + "/trips.txt");
-        trips.printCSV();
-        trips;
+        CSVReader csvData(folder + "/trips.txt");
+        csvData.printCSV();
+
+        std::map<std::string, ColumnData> cols;
+
+        cols.emplace("route_id", ColumnData{});
+        cols.emplace("service_id", ColumnData{});
+        cols.emplace("trip_id", ColumnData{});
+        cols.emplace("trip_headsign", ColumnData{});
+        cols.emplace("trip_short_name", ColumnData{});
+        cols.emplace("direction_id", ColumnData{});
+        cols.emplace("block_id", ColumnData{});
+        cols.emplace("shape_id", ColumnData{});
+        cols.emplace("wheelchair_accessible", ColumnData{});
+        cols.emplace("bikes_allowed", ColumnData{});
+
+        cols["route_id"].isOptional              = true;
+        cols["service_id"].isOptional            = true;
+        cols["trip_id"].isOptional               = true;
+        cols["trip_headsign"].isOptional         = true;
+        cols["trip_short_name"].isOptional       = true;
+        cols["direction_id"].isOptional          = true;
+        cols["block_id"].isOptional              = true;
+        cols["shape_id"].isOptional              = true;
+        cols["wheelchair_accessible"].isOptional = true;
+        cols["bikes_allowed"].isOptional         = true;
+
+        int colIndex = 0;
+        for(const auto& colName : csvData.getHeader())
+        {
+            cols[colName].exists = true;
+            cols[colName].index  = colIndex;
+            ++colIndex;
+        }
+
+        for(auto row : csvData)
+        {
+            this->trips.emplace_back(
+            Trips(makeValue<std::string>(cols, "route_id", row),
+                  makeValue<int>(cols, "service_id", row),
+                  makeValue<int>(cols, "trip_id", row),
+                  makeValue<std::optional<std::string>>(cols, "trip_headsign", row),
+                  makeValue<std::optional<std::string>>(cols, "trip_short_name", row),
+                  makeValue<Trips::direction_id_enum>(cols, "direction_id", row),
+                  makeValue<std::optional<int>>(cols, "block_id", row),
+                  makeValue<std::optional<int>>(cols, "shape_id", row),
+                  makeValue<Trips::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
+                  makeValue<Trips::bikes_allowed_enum>(cols, "bikes_allowed", row)));
+        }
+        for(auto row : this->trips) std::cout << row << std::endl;
     }
     else
     {

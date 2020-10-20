@@ -97,7 +97,7 @@ public:
 
     enum class continuous_pickup_enum
     {
-        Unset,
+        Unset            = -1, // this field is optional
         Continuous       = 0,
         NonContinuous    = 1,
         PhoneContinuous  = 2,
@@ -106,7 +106,7 @@ public:
 
     enum class continuous_drop_off_enum
     {
-        Unset,
+        Unset            = -1, // this field is optional
         Continuous       = 0,
         NonContinuous    = 1,
         PhoneContinuous  = 2,
