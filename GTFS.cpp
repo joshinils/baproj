@@ -158,6 +158,43 @@ Trips::bikes_allowed_enum makeValue<Trips::bikes_allowed_enum>(const std::map<st
 }
 
 template<>
+Stop_times::pickup_type_enum makeValue<Stop_times::pickup_type_enum>(
+const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return Stop_times::pickup_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+Stop_times::drop_off_type_enum makeValue<Stop_times::drop_off_type_enum>(
+const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return Stop_times::drop_off_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+Stop_times::continuous_pickup_enum makeValue<Stop_times::continuous_pickup_enum>(
+const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return Stop_times::continuous_pickup_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+Stop_times::continuous_drop_off_enum makeValue<Stop_times::continuous_drop_off_enum>(
+const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return Stop_times::continuous_drop_off_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+Stop_times::timepoint_enum makeValue<Stop_times::timepoint_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+                                                                 const std::string& name,
+                                                                 const CSVReader::Row& row)
+{
+    return Stop_times::timepoint_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+
+template<>
 std::optional<double> makeValue<std::optional<double>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
                                                        const std::string& name,
                                                        const CSVReader::Row& row)
@@ -379,9 +416,9 @@ GTFS::GTFS(const std::string& folder)
         cols.emplace("wheelchair_accessible", ColumnData{});
         cols.emplace("bikes_allowed", ColumnData{});
 
-        cols["route_id"].isOptional              = true;
-        cols["service_id"].isOptional            = true;
-        cols["trip_id"].isOptional               = true;
+        cols["route_id"].isOptional              = false;
+        cols["service_id"].isOptional            = false;
+        cols["trip_id"].isOptional               = false;
         cols["trip_headsign"].isOptional         = true;
         cols["trip_short_name"].isOptional       = true;
         cols["direction_id"].isOptional          = true;
@@ -422,9 +459,62 @@ GTFS::GTFS(const std::string& folder)
 
     if(std::filesystem::exists(folder + "/stop_times.txt"))
     {
-        CSVReader stop_times(folder + "/stop_times.txt");
-        stop_times.printCSV();
-        stop_times;
+        CSVReader csvData(folder + "/stop_times.txt");
+        csvData.printCSV();
+
+        std::map<std::string, ColumnData> cols;
+
+        cols.emplace("trip_id", ColumnData{});
+        cols.emplace("arrival_time", ColumnData{});
+        cols.emplace("departure_time", ColumnData{});
+        cols.emplace("stop_id", ColumnData{});
+        cols.emplace("stop_sequence", ColumnData{});
+        cols.emplace("stop_headsign", ColumnData{});
+        cols.emplace("pickup_type", ColumnData{});
+        cols.emplace("drop_off_type", ColumnData{});
+        cols.emplace("continuous_pickup", ColumnData{});
+        cols.emplace("continuous_drop_off", ColumnData{});
+        cols.emplace("shape_dist_traveled", ColumnData{});
+        cols.emplace("timepoint", ColumnData{});
+
+        cols["trip_id"].isOptional             = false;
+        cols["arrival_time"].isOptional        = true;
+        cols["departure_time"].isOptional      = true;
+        cols["stop_id"].isOptional             = true;
+        cols["stop_sequence"].isOptional       = false;
+        cols["stop_headsign"].isOptional       = true;
+        cols["pickup_type"].isOptional         = true;
+        cols["drop_off_type"].isOptional       = true;
+        cols["continuous_pickup"].isOptional   = true;
+        cols["continuous_drop_off"].isOptional = true;
+        cols["shape_dist_traveled"].isOptional = true;
+        cols["timepoint"].isOptional           = true;
+
+        int colIndex = 0;
+        for(const auto& colName : csvData.getHeader())
+        {
+            cols[colName].exists = true;
+            cols[colName].index  = colIndex;
+            ++colIndex;
+        }
+
+        for(auto row : csvData)
+        {
+            this->stop_times.emplace_back(
+            Stop_times(makeValue<int>(cols, "trip_id", row),
+                       makeValue<std::optional<std::string>>(cols, "arrival_time", row),
+                       makeValue<std::optional<std::string>>(cols, "departure_time", row),
+                       makeValue<std::string>(cols, "stop_id", row),
+                       makeValue<unsigned int>(cols, "stop_sequence", row),
+                       makeValue<std::optional<std::string>>(cols, "stop_headsign", row),
+                       makeValue<Stop_times::pickup_type_enum>(cols, "pickup_type", row),
+                       makeValue<Stop_times::drop_off_type_enum>(cols, "drop_off_type", row),
+                       makeValue<Stop_times::continuous_pickup_enum>(cols, "continuous_pickup", row),
+                       makeValue<Stop_times::continuous_drop_off_enum>(cols, "continuous_drop_off", row),
+                       makeValue<std::optional<double>>(cols, "shape_dist_traveled", row),
+                       makeValue<Stop_times::timepoint_enum>(cols, "timepoint", row)));
+        }
+        for(auto row : this->stop_times) std::cout << row << std::endl;
     }
     else
     {
