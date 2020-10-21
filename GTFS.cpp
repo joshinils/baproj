@@ -308,25 +308,36 @@ GTFS::GTFS(const std::string& folder)
             ++colIndex;
         }
 
+        std::string stop_id;
         for(auto row : csvData)
         {
-            this->stops.emplace_back(Stops(makeValue<std::string>(cols, "stop_id", row),
-                                           makeValue<std::optional<std::string>>(cols, "stop_code", row),
-                                           makeValue<std::optional<std::string>>(cols, "stop_name", row),
-                                           makeValue<std::optional<std::string>>(cols, "stop_desc", row),
-                                           makeValue<std::optional<double>>(cols, "stop_lat", row),
-                                           makeValue<std::optional<double>>(cols, "stop_lon", row),
-                                           makeValue<std::optional<std::string>>(cols, "zone_id", row),
-                                           makeValue<std::optional<std::string>>(cols, "stop_url", row),
-                                           makeValue<Stops::location_type_enum>(cols, "location_type", row),
-                                           makeValue<std::optional<long long>>(cols, "parent_station", row),
-                                           makeValue<std::optional<std::string>>(cols, "stop_timezone", row),
-                                           makeValue<Stops::wheelchair_boarding_enum>(cols, "wheelchair_boarding", row),
-                                           makeValue<std::optional<int>>(cols, "level_id", row),
-                                           makeValue<std::optional<std::string>>(cols, "platform_code", row)));
+            stop_id = makeValue<std::string>(cols, "stop_id", row);
+            if(this->stops.count(stop_id) > 0)
+                throw std::domain_error(std::string("duplicate stop_id \"") + stop_id + "\" found in \"" + folder
+                                        + "/stops.txt\"");
+            this->stops.emplace(
+            stop_id,
+            std::make_shared<Stops>(Stops(stop_id,
+                                          makeValue<std::optional<std::string>>(cols, "stop_code", row),
+                                          makeValue<std::optional<std::string>>(cols, "stop_name", row),
+                                          makeValue<std::optional<std::string>>(cols, "stop_desc", row),
+                                          makeValue<std::optional<double>>(cols, "stop_lat", row),
+                                          makeValue<std::optional<double>>(cols, "stop_lon", row),
+                                          makeValue<std::optional<std::string>>(cols, "zone_id", row),
+                                          makeValue<std::optional<std::string>>(cols, "stop_url", row),
+                                          makeValue<Stops::location_type_enum>(cols, "location_type", row),
+                                          makeValue<std::optional<long long>>(cols, "parent_station", row),
+                                          makeValue<std::optional<std::string>>(cols, "stop_timezone", row),
+                                          makeValue<Stops::wheelchair_boarding_enum>(cols, "wheelchair_boarding", row),
+                                          makeValue<std::optional<int>>(cols, "level_id", row),
+                                          makeValue<std::optional<std::string>>(cols, "platform_code", row))));
         }
-        for(size_t i = 0; i < this->stops.size() && i < this->maxPrint; i++)
-        { std::cout << this->stops[i] << std::endl; }
+        int i = 0;
+        for(const auto& stop : this->stops)
+        {
+            std::cout << *(stop.second) << std::endl;
+            if(++i > this->maxPrint) break;
+        }
     }
     else
     {
@@ -374,25 +385,35 @@ GTFS::GTFS(const std::string& folder)
             ++colIndex;
         }
 
+        std::string route_id;
         for(auto row : csvData)
         {
-            this->routes.emplace_back(
-            Routes(makeValue<std::string>(cols, "route_id", row),
-                   makeValue<std::optional<int>>(cols, "agency_id", row),
-                   makeValue<std::optional<std::string>>(cols, "route_short_name", row),
-                   makeValue<std::optional<std::string>>(cols, "route_long_name", row),
-                   makeValue<std::optional<std::string>>(cols, "route_desc", row),
-                   makeValue<Routes::route_type_enum>(cols, "route_type", row),
-                   makeValue<std::optional<std::string>>(cols, "route_url", row),
-                   makeValue<std::optional<std::string>>(cols, "route_color", row),
-                   makeValue<std::optional<std::string>>(cols, "route_text_color", row),
-                   makeValue<std::optional<unsigned int>>(cols, "route_sort_order", row),
-                   makeValue<Routes::continuous_pickup_enum>(cols, "continuous_pickup", row),
-                   makeValue<Routes::continuous_drop_off_enum>(cols, "continuous_drop_off", row)));
+            route_id = makeValue<std::string>(cols, "route_id", row);
+            if(this->routes.count(route_id) > 0)
+                throw std::domain_error(std::string("duplicate route_id \"") + route_id + "\" found in \"" + folder
+                                        + "/routes.txt\"");
+            this->routes.emplace(route_id,
+                                 std::make_shared<Routes>(Routes(
+                                 route_id,
+                                 makeValue<std::optional<int>>(cols, "agency_id", row),
+                                 makeValue<std::optional<std::string>>(cols, "route_short_name", row),
+                                 makeValue<std::optional<std::string>>(cols, "route_long_name", row),
+                                 makeValue<std::optional<std::string>>(cols, "route_desc", row),
+                                 makeValue<Routes::route_type_enum>(cols, "route_type", row),
+                                 makeValue<std::optional<std::string>>(cols, "route_url", row),
+                                 makeValue<std::optional<std::string>>(cols, "route_color", row),
+                                 makeValue<std::optional<std::string>>(cols, "route_text_color", row),
+                                 makeValue<std::optional<unsigned int>>(cols, "route_sort_order", row),
+                                 makeValue<Routes::continuous_pickup_enum>(cols, "continuous_pickup", row),
+                                 makeValue<Routes::continuous_drop_off_enum>(cols, "continuous_drop_off", row))));
         }
 
-        for(size_t i = 0; i < this->routes.size() && i < this->maxPrint; i++)
-        { std::cout << this->routes[i] << std::endl; }
+        int i = 0;
+        for(const auto& route : this->routes)
+        {
+            std::cout << *(route.second) << std::endl;
+            if(++i > this->maxPrint) break;
+        }
     }
     else
     {
@@ -436,22 +457,35 @@ GTFS::GTFS(const std::string& folder)
             ++colIndex;
         }
 
+        int trip_id;
         for(auto row : csvData)
         {
-            this->trips.emplace_back(
-            Trips(makeValue<std::string>(cols, "route_id", row),
-                  makeValue<int>(cols, "service_id", row),
-                  makeValue<int>(cols, "trip_id", row),
-                  makeValue<std::optional<std::string>>(cols, "trip_headsign", row),
-                  makeValue<std::optional<std::string>>(cols, "trip_short_name", row),
-                  makeValue<Trips::direction_id_enum>(cols, "direction_id", row),
-                  makeValue<std::optional<int>>(cols, "block_id", row),
-                  makeValue<std::optional<int>>(cols, "shape_id", row),
-                  makeValue<Trips::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
-                  makeValue<Trips::bikes_allowed_enum>(cols, "bikes_allowed", row)));
+            trip_id = makeValue<int>(cols, "trip_id", row);
+            if(this->trips.count(trip_id) > 0)
+                throw std::domain_error(std::string("duplicate trip_id \"") + std::to_string(trip_id) + "\" found in \""
+                                        + folder + "/trips.txt\"");
+            this->trips.emplace(trip_id,
+                                std::make_shared<Trips>(
+                                Trips(makeValue<std::string>(cols, "route_id", row),
+                                      makeValue<int>(cols, "service_id", row),
+                                      trip_id,
+                                      makeValue<std::optional<std::string>>(cols, "trip_headsign", row),
+                                      makeValue<std::optional<std::string>>(cols, "trip_short_name", row),
+                                      makeValue<Trips::direction_id_enum>(cols, "direction_id", row),
+                                      makeValue<std::optional<int>>(cols, "block_id", row),
+                                      makeValue<std::optional<int>>(cols, "shape_id", row),
+                                      makeValue<Trips::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
+                                      makeValue<Trips::bikes_allowed_enum>(cols, "bikes_allowed", row))));
         }
-        for(size_t i = 0; i < this->trips.size() && i < this->maxPrint; i++)
-        { std::cout << this->trips[i] << std::endl; }
+        int i = 0;
+        for(const auto& trip : this->trips)
+        {
+            std::cout << *(trip.second) << std::endl;
+            if(++i > this->maxPrint) break;
+        }
+
+        /* connect trips to other read files, fill its pointers */
+        for(auto trip : this->trips) { trip.second->route = this->routes.at(trip.second->getRoute_id()); }
     }
     else
     {
@@ -517,6 +551,18 @@ GTFS::GTFS(const std::string& folder)
         }
         for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)
         { std::cout << this->stop_times[i] << std::endl; }
+
+        /* connect stop_times to other read files, fill its pointers */
+        for(auto stopService : this->stop_times)
+        {
+            // trip.second->route = this->routes.at(trip.second->getRoute_id());
+
+            //trip
+            stopService.trip = this->trips.at(stopService.getTrip_id());
+
+            //stop
+            stopService.stop = this->stops.at(stopService.getStop_id());
+        }
     }
     else
     {

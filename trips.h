@@ -1,5 +1,8 @@
 #pragma once
+//#include "GTFS.h"
+#include "routes.h"
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <string>
 
@@ -55,7 +58,7 @@ public:
     /* Text that appears on signage identifying the trip's destination to riders. Use this field to distinguish
      * between different patterns of service on the same route. If the headsign changes during a trip, trip_headsign can
      * be overridden by specifying values for the stop_times.stop_headsign. */
-    std::optional<std::string> GetTrip_headsign() const { return trip_headsign; }
+    std::optional<std::string> getTrip_headsign() const { return trip_headsign; }
 
     /* Public facing text used to identify the trip to riders, for instance, to identify train numbers for commuter
      * rail trips. If riders do not commonly rely on trip names, leave this field empty. A trip_short_name value, if
@@ -124,6 +127,8 @@ private:
     /* Identifies a route.
      * ID referencing routes.route_id */
     std::string route_id;
+    std::weak_ptr<Routes> route = std::weak_ptr<Routes>();
+    friend class GTFS;
 
     /* Identifies a set of dates when service is available for one or more routes.
      * ID referencing calendar.service_id or calendar_dates.service_id */

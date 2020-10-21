@@ -14,6 +14,8 @@
 #include "stops.h"
 #include "transfers.h"
 #include "trips.h"
+#include <map>
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
@@ -38,13 +40,13 @@ private:
     std::vector<Agency> agency;
 
     // Stops where vehicles pick up or drop off riders. Also defines stations and station entrances.
-    std::vector<Stops> stops;
+    std::map<std::string, std::shared_ptr<Stops>> stops;
 
     // Transit routes. A route is a group of trips that are displayed to riders as a single service.
-    std::vector<Routes> routes;
+    std::map<std::string, std::shared_ptr<Routes>> routes;
 
     // Trips for each route. A trip is a sequence of two or more stops that occur during a specific time period.
-    std::vector<Trips> trips;
+    std::map<int, std::shared_ptr<Trips>> trips;
 
     // Times that a vehicle arrives at and departs from stops for each trip.
     std::vector<Stop_times> stop_times;
