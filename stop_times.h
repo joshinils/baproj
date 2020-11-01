@@ -6,6 +6,8 @@
 #include <optional>
 #include <string>
 
+class Trips;
+
 class Stop_times
 {
 public:
@@ -51,6 +53,7 @@ public:
         Approximate = 0, // Times are considered approximate.
         Exact       = 1, // or empty - Times are considered exact.*/
     };
+    using stop_sequence_t = unsigned int;
 
     Stop_times(int trip_id,
                std::optional<std::string> arrival_time,
@@ -235,7 +238,7 @@ private:
      * consecutive.
      * Example: The first location on the trip could have a stop_sequence=1, the second location on the trip
      * could have a stop_sequence=23, the third location could have a stop_sequence=40, and so on. */
-    unsigned int stop_sequence;
+    stop_sequence_t stop_sequence;
 
     /* Text that appears on signage identifying the trip's destination to riders. This field overrides the default
      trips.trip_headsign when the headsign changes between stops. If the headsign is displayed for an entire trip, use

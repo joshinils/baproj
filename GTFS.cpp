@@ -681,3 +681,9 @@ GTFS::GTFS(const std::string& folder)
 }
 
 GTFS::~GTFS() { }
+
+void GTFS::connectTripsStopTimes()
+{
+    for(auto& stop_t : this->stop_times)
+    { (stop_t.trip)->includedStopTimes.emplace(stop_t.getStop_sequence(), stop_t); }
+}
