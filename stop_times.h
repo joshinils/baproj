@@ -1,6 +1,7 @@
 #pragma once
 #include "stops.h"
 #include "trips.h"
+#include "type_aliases.h"
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -53,7 +54,6 @@ public:
         Approximate = 0, // Times are considered approximate.
         Exact       = 1, // or empty - Times are considered exact.*/
     };
-    using stop_sequence_t = unsigned int;
 
     Stop_times(int trip_id,
                std::optional<std::string> arrival_time,

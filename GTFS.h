@@ -49,7 +49,7 @@ private:
     std::map<int, std::shared_ptr<Trips>> trips;
 
     // Times that a vehicle arrives at and departs from stops for each trip.
-    std::vector<Stop_times> stop_times;
+    std::vector<std::shared_ptr<Stop_times>> stop_times;
 
     // Conditionally required Service dates specified using a weekly schedule with start and end dates.
     // This file is required unless all dates of service are defined in calendar_dates.

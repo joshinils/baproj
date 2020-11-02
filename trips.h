@@ -2,6 +2,7 @@
 //#include "GTFS.h"
 #include "routes.h"
 #include "stop_times.h"
+#include "type_aliases.h"
 #include <iostream>
 #include <map>
 #include <memory>
@@ -10,6 +11,7 @@
 #include <vector>
 
 class Stop_times;
+
 class Trips
 {
 public:
@@ -200,5 +202,5 @@ private:
      * ***/
 
     // store the stop_time instances which reference this trip
-    std::map<Stop_times::stop_sequence_t, std::weak_ptr<Stop_times>> includedStopTimes;
+    std::map<stop_sequence_t, std::weak_ptr<Stop_times>> includedStopTimes;
 };
