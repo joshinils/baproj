@@ -1,10 +1,16 @@
 #pragma once
 //#include "GTFS.h"
 #include "routes.h"
+#include "stop_times.h"
+#include "type_aliases.h"
 #include <iostream>
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
+
+class Stop_times;
 
 class Trips
 {
@@ -189,4 +195,12 @@ private:
         1 - Vehicle being used on this particular trip can accommodate at least one bicycle.
         2 - No bicycles are allowed on this trip. */
     bikes_allowed_enum bikes_allowed = bikes_allowed_enum::Unset;
+
+
+    /***
+     * additional data not from read files
+     * ***/
+
+    // store the stop_time instances which reference this trip
+    std::map<stop_sequence_t, std::weak_ptr<Stop_times>> includedStopTimes;
 };

@@ -535,7 +535,7 @@ GTFS::GTFS(const std::string& folder)
 
         for(auto row : csvData)
         {
-            this->stop_times.emplace_back(
+            this->stop_times.emplace_back(std::make_shared<Stop_times>(
             Stop_times(makeValue<int>(cols, "trip_id", row),
                        makeValue<std::optional<std::string>>(cols, "arrival_time", row),
                        makeValue<std::optional<std::string>>(cols, "departure_time", row),
@@ -547,21 +547,22 @@ GTFS::GTFS(const std::string& folder)
                        makeValue<Stop_times::continuous_pickup_enum>(cols, "continuous_pickup", row),
                        makeValue<Stop_times::continuous_drop_off_enum>(cols, "continuous_drop_off", row),
                        makeValue<std::optional<double>>(cols, "shape_dist_traveled", row),
-                       makeValue<Stop_times::timepoint_enum>(cols, "timepoint", row)));
+                       makeValue<Stop_times::timepoint_enum>(cols, "timepoint", row))));
         }
         for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)
-        { std::cout << this->stop_times[i] << std::endl; }
+        { std::cout << *this->stop_times[i] << std::endl; }
 
         /* connect stop_times to other read files, fill its pointers */
+        std::cout << "/* connect stop_times to other read files, fill its pointers */" << std::endl;
         for(auto stopService : this->stop_times)
         {
             // trip.second->route = this->routes.at(trip.second->getRoute_id());
 
-            //trip
-            stopService.trip = this->trips.at(stopService.getTrip_id());
+            // trip
+            stopService->trip = this->trips.at(stopService->getTrip_id());
 
-            //stop
-            stopService.stop = this->stops.at(stopService.getStop_id());
+            // stop
+            stopService->stop = this->stops.at(stopService->getStop_id());
         }
     }
     else
@@ -678,6 +679,23 @@ GTFS::GTFS(const std::string& folder)
     // {
     //     std::cout << "optional file " + folder + "/feed_info.txt" + " not found\n";
     // }
+
+    connectTripsStopTimes();
 }
 
 GTFS::~GTFS() { }
+
+void GTFS::connectTripsStopTimes()
+{
+    std::cout << __FILE__ << ":" << __LINE__ << " " << __PRETTY_FUNCTION__ << std::endl;
+    for(auto& stop_t : this->stop_times)
+    {
+        auto t = stop_t->trip.lock();
+        if(!t)
+        {
+            std::cout << "warning, a stop_times does not have their trip connected!";
+            continue;
+        }
+        t->includedStopTimes.emplace(stop_t->getStop_sequence(), stop_t);
+    }
+}

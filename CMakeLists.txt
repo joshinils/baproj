@@ -3,7 +3,7 @@ project(baproject VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable("${PROJECT_NAME}" 
+add_executable("${PROJECT_NAME}"
     "agency.cpp"
     "agency.h"
     "calendar.cpp"
@@ -39,4 +39,5 @@ add_executable("${PROJECT_NAME}"
     "transfers.h"
     "trips.cpp"
     "trips.h"
+    "type_aliases.h"
 )

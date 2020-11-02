@@ -1,10 +1,13 @@
 #pragma once
 #include "stops.h"
 #include "trips.h"
+#include "type_aliases.h"
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <string>
+
+class Trips;
 
 class Stop_times
 {
@@ -235,7 +238,7 @@ private:
      * consecutive.
      * Example: The first location on the trip could have a stop_sequence=1, the second location on the trip
      * could have a stop_sequence=23, the third location could have a stop_sequence=40, and so on. */
-    unsigned int stop_sequence;
+    stop_sequence_t stop_sequence;
 
     /* Text that appears on signage identifying the trip's destination to riders. This field overrides the default
      trips.trip_headsign when the headsign changes between stops. If the headsign is displayed for an entire trip, use
