@@ -559,10 +559,12 @@ GTFS::GTFS(const std::string& folder)
             // trip.second->route = this->routes.at(trip.second->getRoute_id());
 
             // trip
-            stopService->trip = this->trips.at(stopService->getTrip_id());
+            const auto& tripId = stopService->getTrip_id();
+            if(this->trips.count(tripId) > 0) stopService->trip = this->trips.at(tripId);
 
             // stop
-            stopService->stop = this->stops.at(stopService->getStop_id());
+            const auto& stopId = stopService->getStop_id();
+            if(this->stops.count(stopId) > 0) stopService->stop = this->stops.at(stopId);
         }
     }
     else
@@ -681,6 +683,14 @@ GTFS::GTFS(const std::string& folder)
     // }
 
     connectTripsStopTimes();
+
+    auto trip = this->trips.begin()->second;
+    std::cout << *trip << std::endl;
+    for(auto a : trip->includedStopTimes)
+    {
+        std::cout << *a.second.lock() << std::endl;
+        std::cout << *a.second.lock()->stop.lock() << std::endl;
+    }
 }
 
 GTFS::~GTFS() { }
@@ -690,12 +700,12 @@ void GTFS::connectTripsStopTimes()
     std::cout << __FILE__ << ":" << __LINE__ << " " << __PRETTY_FUNCTION__ << std::endl;
     for(auto& stop_t : this->stop_times)
     {
-        auto t = stop_t->trip.lock();
-        if(!t)
+        auto trip = stop_t->trip.lock();
+        if(!trip)
         {
             std::cout << "warning, a stop_times does not have their trip connected!";
             continue;
         }
-        t->includedStopTimes.emplace(stop_t->getStop_sequence(), stop_t);
+        trip->includedStopTimes.emplace(stop_t->getStop_sequence(), stop_t);
     }
 }
