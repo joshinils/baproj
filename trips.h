@@ -202,5 +202,5 @@ private:
      * ***/
 
     // store the stop_time instances which reference this trip
-    std::map<stop_sequence_t, std::weak_ptr<Stop_times>> includedStopTimes;
+    std::map<stop_times_types::stop_sequence_t, std::weak_ptr<Stop_times>> includedStopTimes;
 };

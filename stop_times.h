@@ -55,17 +55,17 @@ public:
         Exact       = 1, // or empty - Times are considered exact.*/
     };
 
-    Stop_times(int trip_id,
-               std::optional<std::string> arrival_time,
-               std::optional<std::string> departure_time,
-               std::string stop_id,
-               unsigned int stop_sequence,
-               std::optional<std::string> stop_headsign,
+    Stop_times(stop_times_types::trip_id_t trip_id,
+               stop_times_types::arrival_time_t arrival_time,
+               stop_times_types::departure_time_t departure_time,
+               stop_times_types::stop_id_t stop_id,
+               stop_times_types::stop_sequence_t stop_sequence,
+               stop_times_types::stop_headsign_t stop_headsign,
                pickup_type_enum pickup_type,
                drop_off_type_enum drop_off_type,
                continuous_pickup_enum continuous_pickup,
                continuous_drop_off_enum continuous_drop_off,
-               std::optional<double> shape_dist_traveled,
+               stop_times_types::shape_dist_traveled_t shape_dist_traveled,
                timepoint_enum timepoint);
     ~Stop_times();
 
@@ -238,7 +238,7 @@ private:
      * consecutive.
      * Example: The first location on the trip could have a stop_sequence=1, the second location on the trip
      * could have a stop_sequence=23, the third location could have a stop_sequence=40, and so on. */
-    stop_sequence_t stop_sequence;
+    stop_times_types::stop_sequence_t stop_sequence;
 
     /* Text that appears on signage identifying the trip's destination to riders. This field overrides the default
      trips.trip_headsign when the headsign changes between stops. If the headsign is displayed for an entire trip, use

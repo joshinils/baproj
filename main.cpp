@@ -1,9 +1,22 @@
 #include "GTFS.h"
-
+#include "TimePoint.h"
 
 int main(int argc, char* argv[])
 try
 {
+    /*
+    // test timepoint
+    std::string s("12:34:56");
+    TimePoint tp(s);
+    std::cout << tp << '\n';
+
+    std::string s2("456789");
+    TimePoint tp2(s2);
+    std::cout << tp2 << '\n';
+    return 0;
+    */
+
+
     //for(size_t i = 0; i < argc; i++) { std::cout << argv[i] << '\n'; }
 
     //CSVReader csv(argv[1]);

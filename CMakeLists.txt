@@ -40,4 +40,6 @@ add_executable("${PROJECT_NAME}"
     "trips.cpp"
     "trips.h"
     "type_aliases.h"
+    "TimePoint.h"
+    "TimePoint.cpp"
 )
