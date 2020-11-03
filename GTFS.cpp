@@ -536,17 +536,17 @@ GTFS::GTFS(const std::string& folder)
         for(auto row : csvData)
         {
             this->stop_times.emplace_back(std::make_shared<Stop_times>(
-            Stop_times(makeValue<int>(cols, "trip_id", row),
-                       makeValue<std::optional<std::string>>(cols, "arrival_time", row),
-                       makeValue<std::optional<std::string>>(cols, "departure_time", row),
-                       makeValue<std::string>(cols, "stop_id", row),
-                       makeValue<unsigned int>(cols, "stop_sequence", row),
-                       makeValue<std::optional<std::string>>(cols, "stop_headsign", row),
+            Stop_times(makeValue<stop_times_types::trip_id_t>(cols, "trip_id", row),
+                       makeValue<stop_times_types::arrival_time_t>(cols, "arrival_time", row),
+                       makeValue<stop_times_types::departure_time_t>(cols, "departure_time", row),
+                       makeValue<stop_times_types::stop_id_t>(cols, "stop_id", row),
+                       makeValue<stop_times_types::stop_sequence_t>(cols, "stop_sequence", row),
+                       makeValue<stop_times_types::stop_headsign_t>(cols, "stop_headsign", row),
                        makeValue<Stop_times::pickup_type_enum>(cols, "pickup_type", row),
                        makeValue<Stop_times::drop_off_type_enum>(cols, "drop_off_type", row),
                        makeValue<Stop_times::continuous_pickup_enum>(cols, "continuous_pickup", row),
                        makeValue<Stop_times::continuous_drop_off_enum>(cols, "continuous_drop_off", row),
-                       makeValue<std::optional<double>>(cols, "shape_dist_traveled", row),
+                       makeValue<stop_times_types::shape_dist_traveled_t>(cols, "shape_dist_traveled", row),
                        makeValue<Stop_times::timepoint_enum>(cols, "timepoint", row))));
         }
         for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)

@@ -71,7 +71,7 @@ public:
 
     /* Identifies a trip. */
     /* ID referencing trips.trip_id */
-    int getTrip_id() const { return trip_id; }
+    stop_times_types::trip_id_t getTrip_id() const { return trip_id; }
 
     /* Arrival time at a specific stop for a specific trip on a route. If there are not separate times for arrival and
     departure at a stop, enter the same value for arrival_time and departure_time. For times occurring after midnight on
@@ -86,7 +86,7 @@ public:
     in a trip.*
      * Time *
      * Conditionally required */
-    std::optional<std::string> getArrival_time() const { return arrival_time; }
+    stop_times_types::arrival_time_t getArrival_time() const { return arrival_time; }
 
     /* Departure time from a specific stop for a specific trip on a route. For times occurring after midnight on the
      service day, enter the time as a value greater than 24:00:00 in HH:MM:SS local time for the day on which the trip
@@ -98,18 +98,18 @@ public:
      interpolated times between timepoints.*
      * Time *
      * Conditionally required */
-    std::optional<std::string> getDeparture_time() const { return departure_time; }
+    stop_times_types::departure_time_t getDeparture_time() const { return departure_time; }
 
     /* Identifies the serviced stop. All stops serviced during a trip must have a record in stop_times.txt. Referenced
      * locations must be stops, not stations or station entrances. A stop may be serviced multiple times in the same
      * trip, and multiple trips and routes may service the same stop.
      * ID referencing stops.stop_id */
-    std::string getStop_id() const { return stop_id; }
+    stop_times_types::stop_id_t getStop_id() const { return stop_id; }
 
     /* Order of stops for a particular trip. The values must increase along the trip but do not need to be
      * consecutive.Example: The first location on the trip could have a stop_sequence=1, the second location on the trip
      * could have a stop_sequence=23, the third location could have a stop_sequence=40, and so on. */
-    unsigned int getStop_sequence() const { return stop_sequence; }
+    stop_times_types::stop_sequence_t getStop_sequence() const { return stop_sequence; }
 
     /* Text that appears on signage identifying the trip's destination to riders. This field overrides the default
      trips.trip_headsign when the headsign changes between stops. If the headsign is displayed for an entire trip, use
@@ -118,7 +118,7 @@ public:
      A stop_headsign value specified for one stop_time does not apply to subsequent stop_times in the same trip. If you
      want to override the trip_headsign for multiple stop_times in the same trip, the stop_headsign value must be
      repeated in each stop_time row.*/
-    std::optional<std::string> getStop_headsign() const { return stop_headsign; }
+    stop_times_types::stop_headsign_t getStop_headsign() const { return stop_headsign; }
 
     /* Indicates pickup method. Valid options are:
 
@@ -165,7 +165,7 @@ public:
      * used to show reverse travel along a route.Example: If a bus travels a distance of 5.25 kilometers from the start
      * of the shape to the stop,shape_dist_traveled=5.25.
      * Non-negative float */
-    std::optional<double> getShape_dist_traveled() const { return shape_dist_traveled; }
+    stop_times_types::shape_dist_traveled_t getShape_dist_traveled() const { return shape_dist_traveled; }
 
     /* Indicates if arrival and departure times for a stop are strictly adhered to by the vehicle or if they are
     instead approximate and/or interpolated times. This field allows a GTFS producer to provide interpolated stop-times,
@@ -196,7 +196,7 @@ public:
 private:
     /* Identifies a trip. */
     /* ID referencing trips.trip_id */
-    int trip_id;
+    stop_times_types::trip_id_t trip_id;
     std::weak_ptr<Trips> trip = std::weak_ptr<Trips>();
     friend class GTFS;
 
@@ -213,7 +213,7 @@ private:
     in a trip.*
      * Time *
      * Conditionally required */
-    std::optional<std::string> arrival_time;
+    stop_times_types::arrival_time_t arrival_time;
 
     /* Departure time from a specific stop for a specific trip on a route. For times occurring after midnight on the
      service day, enter the time as a value greater than 24:00:00 in HH:MM:SS local time for the day on which the trip
@@ -225,13 +225,13 @@ private:
      interpolated times between timepoints.*
      * Time *
      * Conditionally required */
-    std::optional<std::string> departure_time;
+    stop_times_types::departure_time_t departure_time;
 
     /* Identifies the serviced stop. All stops serviced during a trip must have a record in stop_times.txt. Referenced
      * locations must be stops, not stations or station entrances. A stop may be serviced multiple times in the same
      * trip, and multiple trips and routes may service the same stop.
      * ID referencing stops.stop_id */
-    std::string stop_id;
+    stop_times_types::stop_id_t stop_id;
     std::weak_ptr<Stops> stop = std::weak_ptr<Stops>();
 
     /* Order of stops for a particular trip. The values must increase along the trip but do not need to be
@@ -247,7 +247,7 @@ private:
      A stop_headsign value specified for one stop_time does not apply to subsequent stop_times in the same trip. If you
      want to override the trip_headsign for multiple stop_times in the same trip, the stop_headsign value must be
      repeated in each stop_time row.*/
-    std::optional<std::string> stop_headsign;
+    stop_times_types::stop_headsign_t stop_headsign;
 
     /* Indicates pickup method. Valid options are:
 
@@ -294,7 +294,7 @@ private:
      * used to show reverse travel along a route.Example: If a bus travels a distance of 5.25 kilometers from the start
      * of the shape to the stop,shape_dist_traveled=5.25.
      * Non-negative float */
-    std::optional<double> shape_dist_traveled;
+    stop_times_types::shape_dist_traveled_t shape_dist_traveled;
 
     /* Indicates if arrival and departure times for a stop are strictly adhered to by the vehicle or if they are
     instead approximate and/or interpolated times. This field allows a GTFS producer to provide interpolated stop-times,
