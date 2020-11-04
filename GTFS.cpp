@@ -3,9 +3,15 @@
 #include <exception>
 #include <filesystem>
 #include <map>
+#include <unordered_map>
+
+// allows differential testing with
+// std::map vs std::unordered_map
+template<typename T, typename U>
+using map_t = std::unordered_map<T, U>;
 
 template<typename T>
-T makeValue(const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+T makeValue(const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     const GTFS::ColumnData& cd = cdMap.at(name);
     if(cd.exists) { return T(row[cd.index]); }
@@ -20,7 +26,7 @@ T makeValue(const std::map<std::string, GTFS::ColumnData>& cdMap, const std::str
 }
 
 template<>
-std::optional<int> makeValue<std::optional<int>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+std::optional<int> makeValue<std::optional<int>>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                  const std::string& name,
                                                  const CSVReader::Row& row)
 {
@@ -36,7 +42,7 @@ std::optional<int> makeValue<std::optional<int>>(const std::map<std::string, GTF
 }
 
 template<>
-std::optional<unsigned int> makeValue<std::optional<unsigned int>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+std::optional<unsigned int> makeValue<std::optional<unsigned int>>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                                    const std::string& name,
                                                                    const CSVReader::Row& row)
 {
@@ -52,7 +58,7 @@ std::optional<unsigned int> makeValue<std::optional<unsigned int>>(const std::ma
 }
 
 template<>
-std::optional<long long> makeValue<std::optional<long long>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+std::optional<long long> makeValue<std::optional<long long>>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                              const std::string& name,
                                                              const CSVReader::Row& row)
 {
@@ -68,7 +74,7 @@ std::optional<long long> makeValue<std::optional<long long>>(const std::map<std:
 }
 
 template<>
-int makeValue<int>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+int makeValue<int>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                    const std::string& name,
                    const CSVReader::Row& row)
 {
@@ -84,7 +90,7 @@ int makeValue<int>(const std::map<std::string, GTFS::ColumnData>& cdMap,
 }
 
 template<>
-unsigned int makeValue<unsigned int>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+unsigned int makeValue<unsigned int>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                      const std::string& name,
                                      const CSVReader::Row& row)
 {
@@ -95,7 +101,7 @@ unsigned int makeValue<unsigned int>(const std::map<std::string, GTFS::ColumnDat
 }
 
 template<>
-Stops::location_type_enum makeValue<Stops::location_type_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+Stops::location_type_enum makeValue<Stops::location_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                                const std::string& name,
                                                                const CSVReader::Row& row)
 {
@@ -104,13 +110,13 @@ Stops::location_type_enum makeValue<Stops::location_type_enum>(const std::map<st
 
 template<>
 Stops::wheelchair_boarding_enum makeValue<Stops::wheelchair_boarding_enum>(
-const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     return Stops::wheelchair_boarding_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Routes::route_type_enum makeValue<Routes::route_type_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+Routes::route_type_enum makeValue<Routes::route_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                            const std::string& name,
                                                            const CSVReader::Row& row)
 {
@@ -122,20 +128,20 @@ Routes::route_type_enum makeValue<Routes::route_type_enum>(const std::map<std::s
 
 template<>
 Routes::continuous_pickup_enum makeValue<Routes::continuous_pickup_enum>(
-const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     return Routes::continuous_pickup_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
 Routes::continuous_drop_off_enum makeValue<Routes::continuous_drop_off_enum>(
-const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     return Routes::continuous_drop_off_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Trips::direction_id_enum makeValue<Trips::direction_id_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+Trips::direction_id_enum makeValue<Trips::direction_id_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                              const std::string& name,
                                                              const CSVReader::Row& row)
 {
@@ -144,13 +150,13 @@ Trips::direction_id_enum makeValue<Trips::direction_id_enum>(const std::map<std:
 
 template<>
 Trips::wheelchair_accessible_enum makeValue<Trips::wheelchair_accessible_enum>(
-const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     return Trips::wheelchair_accessible_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Trips::bikes_allowed_enum makeValue<Trips::bikes_allowed_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+Trips::bikes_allowed_enum makeValue<Trips::bikes_allowed_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                                const std::string& name,
                                                                const CSVReader::Row& row)
 {
@@ -158,35 +164,36 @@ Trips::bikes_allowed_enum makeValue<Trips::bikes_allowed_enum>(const std::map<st
 }
 
 template<>
-Stop_times::pickup_type_enum makeValue<Stop_times::pickup_type_enum>(
-const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+Stop_times::pickup_type_enum makeValue<Stop_times::pickup_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
+                                                                     const std::string& name,
+                                                                     const CSVReader::Row& row)
 {
     return Stop_times::pickup_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
 Stop_times::drop_off_type_enum makeValue<Stop_times::drop_off_type_enum>(
-const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     return Stop_times::drop_off_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
 Stop_times::continuous_pickup_enum makeValue<Stop_times::continuous_pickup_enum>(
-const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     return Stop_times::continuous_pickup_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
 Stop_times::continuous_drop_off_enum makeValue<Stop_times::continuous_drop_off_enum>(
-const std::map<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
     return Stop_times::continuous_drop_off_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Stop_times::timepoint_enum makeValue<Stop_times::timepoint_enum>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+Stop_times::timepoint_enum makeValue<Stop_times::timepoint_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                                  const std::string& name,
                                                                  const CSVReader::Row& row)
 {
@@ -194,7 +201,7 @@ Stop_times::timepoint_enum makeValue<Stop_times::timepoint_enum>(const std::map<
 }
 
 template<>
-std::optional<double> makeValue<std::optional<double>>(const std::map<std::string, GTFS::ColumnData>& cdMap,
+std::optional<double> makeValue<std::optional<double>>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                        const std::string& name,
                                                        const CSVReader::Row& row)
 {
@@ -216,7 +223,7 @@ GTFS::GTFS(const std::string& folder)
         CSVReader csvData(folder + "/agency.txt");
         csvData.printCSV();
 
-        std::map<std::string, ColumnData> cols;
+        map_t<std::string, ColumnData> cols;
 
         cols.emplace("agency_id", ColumnData{});
         cols.emplace("agency_name", ColumnData{});
@@ -244,7 +251,7 @@ GTFS::GTFS(const std::string& folder)
             ++colIndex;
         }
 
-        for(auto row : csvData)
+        for(auto const& row : csvData)
         {
             this->agency.emplace_back(Agency(makeValue<std::optional<int>>(cols, "agency_id", row),
                                              makeValue<std::string>(cols, "agency_name", row),
@@ -268,7 +275,7 @@ GTFS::GTFS(const std::string& folder)
         CSVReader csvData(folder + "/stops.txt");
         csvData.printCSV();
 
-        std::map<std::string, ColumnData> cols;
+        map_t<std::string, ColumnData> cols;
 
         cols.emplace("stop_id", ColumnData{});
         cols.emplace("stop_code", ColumnData{});
@@ -309,7 +316,7 @@ GTFS::GTFS(const std::string& folder)
         }
 
         std::string stop_id;
-        for(auto row : csvData)
+        for(auto const& row : csvData)
         {
             stop_id = makeValue<std::string>(cols, "stop_id", row);
             if(this->stops.count(stop_id) > 0)
@@ -349,7 +356,7 @@ GTFS::GTFS(const std::string& folder)
         CSVReader csvData(folder + "/routes.txt");
         csvData.printCSV();
 
-        std::map<std::string, ColumnData> cols;
+        map_t<std::string, ColumnData> cols;
 
         cols.emplace("route_id", ColumnData{});
         cols.emplace("agency_id", ColumnData{});
@@ -386,7 +393,7 @@ GTFS::GTFS(const std::string& folder)
         }
 
         std::string route_id;
-        for(auto row : csvData)
+        for(auto const& row : csvData)
         {
             route_id = makeValue<std::string>(cols, "route_id", row);
             if(this->routes.count(route_id) > 0)
@@ -425,7 +432,7 @@ GTFS::GTFS(const std::string& folder)
         CSVReader csvData(folder + "/trips.txt");
         csvData.printCSV();
 
-        std::map<std::string, ColumnData> cols;
+        map_t<std::string, ColumnData> cols;
 
         cols.emplace("route_id", ColumnData{});
         cols.emplace("service_id", ColumnData{});
@@ -458,7 +465,7 @@ GTFS::GTFS(const std::string& folder)
         }
 
         int trip_id;
-        for(auto row : csvData)
+        for(auto const& row : csvData)
         {
             trip_id = makeValue<int>(cols, "trip_id", row);
             if(this->trips.count(trip_id) > 0)
@@ -497,7 +504,7 @@ GTFS::GTFS(const std::string& folder)
         CSVReader csvData(folder + "/stop_times.txt");
         csvData.printCSV();
 
-        std::map<std::string, ColumnData> cols;
+        map_t<std::string, ColumnData> cols;
 
         cols.emplace("trip_id", ColumnData{});
         cols.emplace("arrival_time", ColumnData{});
@@ -533,7 +540,7 @@ GTFS::GTFS(const std::string& folder)
             ++colIndex;
         }
 
-        for(auto row : csvData)
+        for(auto const& row : csvData)
         {
             this->stop_times.emplace_back(std::make_shared<Stop_times>(
             Stop_times(makeValue<stop_times_types::trip_id_t>(cols, "trip_id", row),
@@ -554,7 +561,7 @@ GTFS::GTFS(const std::string& folder)
 
         /* connect stop_times to other read files, fill its pointers */
         std::cout << "/* connect stop_times to other read files, fill its pointers */" << std::endl;
-        for(auto stopService : this->stop_times)
+        for(auto& stopService : this->stop_times)
         {
             // trip.second->route = this->routes.at(trip.second->getRoute_id());
 
@@ -698,7 +705,7 @@ GTFS::~GTFS() { }
 void GTFS::connectTripsStopTimes()
 {
     std::cout << __FILE__ << ":" << __LINE__ << " " << __PRETTY_FUNCTION__ << std::endl;
-    for(auto& stop_t : this->stop_times)
+    for(auto const& stop_t : this->stop_times)
     {
         auto trip = stop_t->trip.lock();
         if(!trip)

@@ -16,6 +16,9 @@ CSVReader::CSVReader(std::string filename)
     for(size_t i = 0; i < _header._fields.size(); i++)
     { _fieldPrintWidths[i] = std::max(_fieldPrintWidths[i], _header._fields[i].size()); }
 
+    auto a = std::min(max_row_read, 10000);
+    this->_rows.reserve(a);
+
     int rows_read = 0;
     for(std::string line; getline(file, line);)
     {
@@ -41,9 +44,11 @@ CSVReader::Row::Row(std::string row)
         QuotedQuote
     };
 
+    _fields.reserve(10);
+
     CSVState state = CSVState::UnquotedField;
     size_t i       = 0; // index of the current field
-    for(char c : row)
+    for(char const& c : row)
     {
         switch(state)
         {
