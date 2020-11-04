@@ -18,7 +18,13 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <unordered_map>
 #include <vector>
+
+// allows differential testing with
+// std::map vs std::unordered_map
+template<typename T, typename U>
+using map_t = std::unordered_map<T, U>;
 
 class GTFS
 {
@@ -40,13 +46,13 @@ private:
     std::vector<Agency> agency;
 
     // Stops where vehicles pick up or drop off riders. Also defines stations and station entrances.
-    std::map<std::string, std::shared_ptr<Stops>> stops;
+    map_t<std::string, std::shared_ptr<Stops>> stops;
 
     // Transit routes. A route is a group of trips that are displayed to riders as a single service.
-    std::map<std::string, std::shared_ptr<Routes>> routes;
+    map_t<std::string, std::shared_ptr<Routes>> routes;
 
     // Trips for each route. A trip is a sequence of two or more stops that occur during a specific time period.
-    std::map<int, std::shared_ptr<Trips>> trips;
+    map_t<int, std::shared_ptr<Trips>> trips;
 
     // Times that a vehicle arrives at and departs from stops for each trip.
     std::vector<std::shared_ptr<Stop_times>> stop_times;

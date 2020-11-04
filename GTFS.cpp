@@ -5,11 +5,6 @@
 #include <map>
 #include <unordered_map>
 
-// allows differential testing with
-// std::map vs std::unordered_map
-template<typename T, typename U>
-using map_t = std::unordered_map<T, U>;
-
 template<typename T>
 T makeValue(const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
