@@ -7,7 +7,7 @@
 #include "feed_info.h"
 #include "frequencies.h"
 #include "level.h"
-#include "pathways.h"
+#include "pathway.h"
 #include "route.h"
 #include "shape.h"
 #include "stop.h"
@@ -82,7 +82,7 @@ private:
     std::optional<std::vector<Transfer>> transfers;
 
     // Optional Pathways linking together locations within stations.
-    std::optional<std::vector<Pathways>> pathways;
+    std::optional<std::vector<Pathway>> pathways;
 
     // Optional Levels within stations.
     std::optional<std::vector<Level>> levels;

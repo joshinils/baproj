@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
-class Pathways
+class Pathway
 {
 public:
-    Pathways();
-    ~Pathways();
+    Pathway();
+    ~Pathway();
 
 private:
     /* The pathway_id field contains an ID that uniquely identifies the pathway. The pathway_id is used by systems as
