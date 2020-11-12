@@ -3,7 +3,7 @@
 #include "calendar.h"
 #include "calendarDate.h"
 #include "fareAttribute.h"
-#include "fare_rules.h"
+#include "fareRule.h"
 #include "feed_info.h"
 #include "frequencies.h"
 #include "level.h"
@@ -69,7 +69,7 @@ private:
     std::optional<std::vector<FareAttribute>> fare_attributes;
 
     // Optional Rules to apply fares for itineraries.
-    std::optional<std::vector<Fare_rules>> fare_rules;
+    std::optional<std::vector<FareRule>> fare_rules;
 
     // Optional Rules for mapping vehicle travel paths, sometimes referred to as route alignments.
     std::optional<std::vector<Shapes>> shapes;

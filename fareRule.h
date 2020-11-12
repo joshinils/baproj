@@ -1,10 +1,10 @@
 #pragma once
 
-class Fare_rules
+class FareRule
 {
 public:
-    Fare_rules();
-    ~Fare_rules();
+    FareRule();
+    ~FareRule();
 
 private:
     /* Identifies a fare class. */
