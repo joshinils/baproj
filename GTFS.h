@@ -9,7 +9,7 @@
 #include "level.h"
 #include "pathways.h"
 #include "route.h"
-#include "shapes.h"
+#include "shape.h"
 #include "stop.h"
 #include "stopTime.h"
 #include "transfers.h"
@@ -72,7 +72,7 @@ private:
     std::optional<std::vector<FareRule>> fare_rules;
 
     // Optional Rules for mapping vehicle travel paths, sometimes referred to as route alignments.
-    std::optional<std::vector<Shapes>> shapes;
+    std::optional<std::vector<Shape>> shapes;
 
     // Optional Headway (time between trips) for headway-based service
     // or a compressed representation of fixed-schedule service.

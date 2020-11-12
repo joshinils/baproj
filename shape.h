@@ -1,10 +1,10 @@
 #pragma once
 
-class Shapes
+class Shape
 {
 public:
-    Shapes();
-    ~Shapes();
+    Shape();
+    ~Shape();
 
 private:
     /* Identifies a shape. */
