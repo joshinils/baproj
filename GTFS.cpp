@@ -137,8 +137,8 @@ const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, cons
 
 template<>
 Trip::direction_id_enum makeValue<Trip::direction_id_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
-                                                             const std::string& name,
-                                                             const CSVReader::Row& row)
+                                                           const std::string& name,
+                                                           const CSVReader::Row& row)
 {
     return Trip::direction_id_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
@@ -152,8 +152,8 @@ const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, cons
 
 template<>
 Trip::bikes_allowed_enum makeValue<Trip::bikes_allowed_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
-                                                               const std::string& name,
-                                                               const CSVReader::Row& row)
+                                                             const std::string& name,
+                                                             const CSVReader::Row& row)
 {
     return Trip::bikes_allowed_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
@@ -212,7 +212,7 @@ std::optional<double> makeValue<std::optional<double>>(const map_t<std::string, 
         throw std::domain_error("required field \"" + name + "\" does not exist!");
 }
 
-GTFS::GTFS(const std::string& folder)
+void GTFS::readAgency(const std::string& folder)
 {
     if(std::filesystem::exists(folder + "/agency.txt"))
     {
@@ -265,7 +265,11 @@ GTFS::GTFS(const std::string& folder)
     {
         throw std::string(folder + "/agency.txt not found!");
     }
+}
 
+
+void GTFS::readStops(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/stops.txt"))
     {
         CSVReader csvData(folder + "/stops.txt");
@@ -346,7 +350,10 @@ GTFS::GTFS(const std::string& folder)
     {
         throw std::string(folder + "/stops.txt not found!");
     }
+}
 
+void GTFS::readRoutes(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/routes.txt"))
     {
         CSVReader csvData(folder + "/routes.txt");
@@ -422,7 +429,10 @@ GTFS::GTFS(const std::string& folder)
     {
         throw std::string(folder + "/routes.txt not found!");
     }
+}
 
+void GTFS::readTrips(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/trips.txt"))
     {
         CSVReader csvData(folder + "/trips.txt");
@@ -467,18 +477,18 @@ GTFS::GTFS(const std::string& folder)
             if(this->trips.count(trip_id) > 0)
                 throw std::domain_error(std::string("duplicate trip_id \"") + std::to_string(trip_id) + "\" found in \""
                                         + folder + "/trips.txt\"");
-            this->trips.emplace(trip_id,
-                                std::make_shared<Trip>(
-                                Trip(makeValue<std::string>(cols, "route_id", row),
-                                      makeValue<int>(cols, "service_id", row),
-                                      trip_id,
-                                      makeValue<std::optional<std::string>>(cols, "trip_headsign", row),
-                                      makeValue<std::optional<std::string>>(cols, "trip_short_name", row),
-                                      makeValue<Trip::direction_id_enum>(cols, "direction_id", row),
-                                      makeValue<std::optional<int>>(cols, "block_id", row),
-                                      makeValue<std::optional<int>>(cols, "shape_id", row),
-                                      makeValue<Trip::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
-                                      makeValue<Trip::bikes_allowed_enum>(cols, "bikes_allowed", row))));
+            this->trips.emplace(
+            trip_id,
+            std::make_shared<Trip>(Trip(makeValue<std::string>(cols, "route_id", row),
+                                        makeValue<int>(cols, "service_id", row),
+                                        trip_id,
+                                        makeValue<std::optional<std::string>>(cols, "trip_headsign", row),
+                                        makeValue<std::optional<std::string>>(cols, "trip_short_name", row),
+                                        makeValue<Trip::direction_id_enum>(cols, "direction_id", row),
+                                        makeValue<std::optional<int>>(cols, "block_id", row),
+                                        makeValue<std::optional<int>>(cols, "shape_id", row),
+                                        makeValue<Trip::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
+                                        makeValue<Trip::bikes_allowed_enum>(cols, "bikes_allowed", row))));
         }
         int i = 0;
         for(const auto& trip : this->trips)
@@ -494,7 +504,10 @@ GTFS::GTFS(const std::string& folder)
     {
         throw std::string(folder + "/trips.txt not found!");
     }
+}
 
+void GTFS::readStopTimes(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/stop_times.txt"))
     {
         CSVReader csvData(folder + "/stop_times.txt");
@@ -574,7 +587,10 @@ GTFS::GTFS(const std::string& folder)
     {
         throw std::string(folder + "/stop_times.txt not found!");
     }
+}
 
+void GTFS::readCalendar(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/calendar.txt"))
     {
         CSVReader csvData(folder + "/calendar.txt");
@@ -585,7 +601,10 @@ GTFS::GTFS(const std::string& folder)
     {
         std::cout << "optional file " + folder + "/calendar.txt" + " not found\n";
     }
+}
 
+void GTFS::readCalendarDates(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/calendar_dates.txt"))
     {
         CSVReader csvData(folder + "/calendar_dates.txt");
@@ -596,29 +615,38 @@ GTFS::GTFS(const std::string& folder)
     {
         std::cout << "optional file " + folder + "/calendar_dates.txt" + " not found\n";
     }
+}
 
-    // if(std::filesystem::exists(folder + "/fare_rules.txt"))
-    // {
-    //     CSVReader csvData(folder + "/fare_rules.txt");
-    //     csvData.printCSV();
-    //     csvData;
-    // }
-    // else
-    // {
-    //     std::cout << "optional file " + folder + "/fare_rules.txt" + " not found\n";
-    // }
+void GTFS::readFareAttributes(const std::string& folder)
+{
+    if(std::filesystem::exists(folder + "/fare_attributes.txt"))
+    {
+        CSVReader csvData(folder + "/fare_attributes.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/fare_attributes.txt" + " not found\n";
+    }
+}
 
-    // if(std::filesystem::exists(folder + "/fare_attributes.txt"))
-    // {
-    //     CSVReader csvData(folder + "/fare_attributes.txt");
-    //     csvData.printCSV();
-    //     csvData;
-    // }
-    // else
-    // {
-    //     std::cout << "optional file " + folder + "/fare_attributes.txt" + " not found\n";
-    // }
+void GTFS::readFareRules(const std::string& folder)
+{
+    if(std::filesystem::exists(folder + "/fare_rules.txt"))
+    {
+        CSVReader csvData(folder + "/fare_rules.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/fare_rules.txt" + " not found\n";
+    }
+}
 
+void GTFS::readShapes(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/shapes.txt"))
     {
         CSVReader csvData(folder + "/shapes.txt");
@@ -629,7 +657,10 @@ GTFS::GTFS(const std::string& folder)
     {
         std::cout << "optional file " + folder + "/shapes.txt" + " not found\n";
     }
+}
 
+void GTFS::readFrequencies(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/frequencies.txt"))
     {
         CSVReader csvData(folder + "/frequencies.txt");
@@ -640,7 +671,10 @@ GTFS::GTFS(const std::string& folder)
     {
         std::cout << "optional file " + folder + "/frequencies.txt" + " not found\n";
     }
+}
 
+void GTFS::readTransfers(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/transfers.txt"))
     {
         CSVReader csvData(folder + "/transfers.txt");
@@ -651,7 +685,10 @@ GTFS::GTFS(const std::string& folder)
     {
         std::cout << "optional file " + folder + "/transfers.txt" + " not found\n";
     }
+}
 
+void GTFS::readPathways(const std::string& folder)
+{
     if(std::filesystem::exists(folder + "/pathways.txt"))
     {
         CSVReader csvData(folder + "/pathways.txt");
@@ -662,28 +699,54 @@ GTFS::GTFS(const std::string& folder)
     {
         std::cout << "optional file " + folder + "/pathways.txt" + " not found\n";
     }
+}
 
-    // if(std::filesystem::exists(folder + "/levels.txt"))
-    // {
-    //     CSVReader csvData(folder + "/levels.txt");
-    //     csvData.printCSV();
-    //     csvData;
-    // }
-    // else
-    // {
-    //     std::cout << "optional file " + folder + "/levels.txt" + " not found\n";
-    // }
+void GTFS::readLevels(const std::string& folder)
+{
+    if(std::filesystem::exists(folder + "/levels.txt"))
+    {
+        CSVReader csvData(folder + "/levels.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/levels.txt" + " not found\n";
+    }
+}
 
-    // if(std::filesystem::exists(folder + "/feed_info.txt"))
-    // {
-    //     CSVReader csvData(folder + "/feed_info.txt");
-    //     csvData.printCSV();
-    //     csvData;
-    // }
-    // else
-    // {
-    //     std::cout << "optional file " + folder + "/feed_info.txt" + " not found\n";
-    // }
+void GTFS::readFeedInfo(const std::string& folder)
+{
+    if(std::filesystem::exists(folder + "/feed_info.txt"))
+    {
+        CSVReader csvData(folder + "/feed_info.txt");
+        csvData.printCSV();
+        csvData;
+    }
+    else
+    {
+        std::cout << "optional file " + folder + "/feed_info.txt" + " not found\n";
+    }
+}
+
+
+GTFS::GTFS(const std::string& folder)
+{
+    readAgency(folder);
+    readStops(folder);
+    readRoutes(folder);
+    readTrips(folder);
+    readStopTimes(folder);
+    readCalendar(folder);
+    readCalendarDates(folder);
+    // readFareAttributes(folder);
+    // readFareRules(folder);
+    readShapes(folder);
+    readFrequencies(folder);
+    readTransfers(folder);
+    readPathways(folder);
+    // readLevels(folder);
+    // readFeedInfo(folder);
 
     connectTripsStopTimes();
 
