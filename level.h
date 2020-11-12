@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 
-class Levels
+class Level
 {
 public:
-    Levels();
-    ~Levels();
+    Level();
+    ~Level();
 
 private:
     /* Id of the level that can be referenced from stops.txt. */

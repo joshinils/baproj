@@ -2,7 +2,7 @@
 #include <iostream>
 #include <optional>
 #include <string>
-class Routes
+class Route
 {
 public:
     enum class route_type_enum
@@ -113,19 +113,19 @@ public:
         DriverContinuous = 3,
     };
 
-    Routes(std::string route_id,
-           std::optional<int> agency_id,
-           std::optional<std::string> route_short_name,
-           std::optional<std::string> route_long_name,
-           std::optional<std::string> route_desc,
-           route_type_enum route_type,
-           std::optional<std::string> route_url,
-           std::optional<std::string> route_color,
-           std::optional<std::string> route_text_color,
-           std::optional<unsigned int> route_sort_order,
-           continuous_pickup_enum continuous_pickup,
-           continuous_drop_off_enum continuous_drop_off);
-    ~Routes();
+    Route(std::string route_id,
+          std::optional<int> agency_id,
+          std::optional<std::string> route_short_name,
+          std::optional<std::string> route_long_name,
+          std::optional<std::string> route_desc,
+          route_type_enum route_type,
+          std::optional<std::string> route_url,
+          std::optional<std::string> route_color,
+          std::optional<std::string> route_text_color,
+          std::optional<unsigned int> route_sort_order,
+          continuous_pickup_enum continuous_pickup,
+          continuous_drop_off_enum continuous_drop_off);
+    ~Route();
 
     /* Identifies a route. */
     std::string getRoute_id() const { return route_id; }
@@ -213,7 +213,7 @@ public:
     The default continuous drop-off behavior defined in routes.txt can be overridden in stop_times.txt.*/
     continuous_drop_off_enum getContinuous_drop_off() const { return continuous_drop_off; }
 
-    friend std::ostream& operator<<(std::ostream& ostr, const Routes& routes)
+    friend std::ostream& operator<<(std::ostream& ostr, const Route& routes)
     {
         ostr << "route_id: " << routes.route_id;
         if(routes.agency_id.has_value()) ostr << ", agency_id: " << routes.agency_id.value();

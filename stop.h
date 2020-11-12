@@ -2,7 +2,7 @@
 #include <iostream>
 #include <optional>
 #include <string>
-class Stops
+class Stop
 {
 public:
     enum class location_type_enum
@@ -23,21 +23,21 @@ public:
         WheelchairInAccessible = 2, // Wheelchair boarding is not possible at this stop.
     };
 
-    Stops(std::string stop_id,
-          std::optional<std::string> stop_code,
-          std::optional<std::string> stop_name,
-          std::optional<std::string> stop_desc,
-          std::optional<double> stop_lat,
-          std::optional<double> stop_lon,
-          std::optional<std::string> zone_id,
-          std::optional<std::string> stop_url,
-          location_type_enum location_type,
-          std::optional<long long> parent_station,
-          std::optional<std::string> stop_timezone,
-          wheelchair_boarding_enum wheelchair_boarding,
-          std::optional<int> level_id,
-          std::optional<std::string> platform_code = {});
-    ~Stops();
+    Stop(std::string stop_id,
+         std::optional<std::string> stop_code,
+         std::optional<std::string> stop_name,
+         std::optional<std::string> stop_desc,
+         std::optional<double> stop_lat,
+         std::optional<double> stop_lon,
+         std::optional<std::string> zone_id,
+         std::optional<std::string> stop_url,
+         location_type_enum location_type,
+         std::optional<long long> parent_station,
+         std::optional<std::string> stop_timezone,
+         wheelchair_boarding_enum wheelchair_boarding,
+         std::optional<int> level_id,
+         std::optional<std::string> platform_code = {});
+    ~Stop();
 
     /* Identifies a stop, station, or station entrance.
 
@@ -166,7 +166,7 @@ public:
      * into other languages. */
     std::optional<std::string> getPlatform_code() const { return platform_code; }
 
-    friend std::ostream& operator<<(std::ostream& ostr, const Stops& stops)
+    friend std::ostream& operator<<(std::ostream& ostr, const Stop& stops)
     {
         ostr << "stop_id: " << stops.stop_id;
         if(stops.stop_code.has_value()) ostr << ", stop_code: " << stops.stop_code.value();

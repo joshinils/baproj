@@ -1,19 +1,19 @@
 #pragma once
 #include "agency.h"
 #include "calendar.h"
-#include "calendar_dates.h"
+#include "calendarDate.h"
 #include "fare_attributes.h"
 #include "fare_rules.h"
 #include "feed_info.h"
 #include "frequencies.h"
-#include "levels.h"
+#include "level.h"
 #include "pathways.h"
-#include "routes.h"
+#include "route.h"
 #include "shapes.h"
-#include "stop_times.h"
-#include "stops.h"
+#include "stop.h"
+#include "stopTime.h"
 #include "transfers.h"
-#include "trips.h"
+#include "trip.h"
 #include <map>
 #include <memory>
 #include <optional>
@@ -46,16 +46,16 @@ private:
     std::vector<Agency> agency;
 
     // Stops where vehicles pick up or drop off riders. Also defines stations and station entrances.
-    map_t<std::string, std::shared_ptr<Stops>> stops;
+    map_t<std::string, std::shared_ptr<Stop>> stops;
 
     // Transit routes. A route is a group of trips that are displayed to riders as a single service.
-    map_t<std::string, std::shared_ptr<Routes>> routes;
+    map_t<std::string, std::shared_ptr<Route>> routes;
 
     // Trips for each route. A trip is a sequence of two or more stops that occur during a specific time period.
-    map_t<int, std::shared_ptr<Trips>> trips;
+    map_t<int, std::shared_ptr<Trip>> trips;
 
     // Times that a vehicle arrives at and departs from stops for each trip.
-    std::vector<std::shared_ptr<Stop_times>> stop_times;
+    std::vector<std::shared_ptr<StopTime>> stop_times;
 
     // Conditionally required Service dates specified using a weekly schedule with start and end dates.
     // This file is required unless all dates of service are defined in calendar_dates.
@@ -63,7 +63,7 @@ private:
 
     // Conditionally required Exceptions for the services defined in the calendar.
     // If calendar is omitted, then calendar_dates is required and must contain all dates of service.
-    std::optional<std::vector<Calendar_dates>> calendar_dates;
+    std::optional<std::vector<CalendarDate>> calendar_dates;
 
     // Optional Fare information for a transit agency's routes.
     std::optional<std::vector<Fare_attributes>> fare_attributes;
@@ -85,7 +85,7 @@ private:
     std::optional<std::vector<Pathways>> pathways;
 
     // Optional Levels within stations.
-    std::optional<std::vector<Levels>> levels;
+    std::optional<std::vector<Level>> levels;
 
     // Conditionally required Dataset metadata, including publisher, version, and expiration information.
     std::optional<std::vector<Feed_info>> feed_info;

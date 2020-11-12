@@ -96,103 +96,104 @@ unsigned int makeValue<unsigned int>(const map_t<std::string, GTFS::ColumnData>&
 }
 
 template<>
-Stops::location_type_enum makeValue<Stops::location_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
-                                                               const std::string& name,
-                                                               const CSVReader::Row& row)
+Stop::location_type_enum makeValue<Stop::location_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
+                                                             const std::string& name,
+                                                             const CSVReader::Row& row)
 {
-    return Stops::location_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+    return Stop::location_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Stops::wheelchair_boarding_enum makeValue<Stops::wheelchair_boarding_enum>(
+Stop::wheelchair_boarding_enum makeValue<Stop::wheelchair_boarding_enum>(
 const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
-    return Stops::wheelchair_boarding_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+    return Stop::wheelchair_boarding_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Routes::route_type_enum makeValue<Routes::route_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
-                                                           const std::string& name,
-                                                           const CSVReader::Row& row)
+Route::route_type_enum makeValue<Route::route_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
+                                                         const std::string& name,
+                                                         const CSVReader::Row& row)
 {
     auto rv = makeValue<std::optional<int>>(cdMap, name, row);
-    if(rv.has_value()) return Routes::route_type_enum(rv.value());
+    if(rv.has_value()) return Route::route_type_enum(rv.value());
     else
         throw std::domain_error("required field \"" + name + "\" does not exist!");
 }
 
 template<>
-Routes::continuous_pickup_enum makeValue<Routes::continuous_pickup_enum>(
+Route::continuous_pickup_enum makeValue<Route::continuous_pickup_enum>(
 const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
-    return Routes::continuous_pickup_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+    return Route::continuous_pickup_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Routes::continuous_drop_off_enum makeValue<Routes::continuous_drop_off_enum>(
+Route::continuous_drop_off_enum makeValue<Route::continuous_drop_off_enum>(
 const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
-    return Routes::continuous_drop_off_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+    return Route::continuous_drop_off_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Trips::direction_id_enum makeValue<Trips::direction_id_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
+Trip::direction_id_enum makeValue<Trip::direction_id_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                              const std::string& name,
                                                              const CSVReader::Row& row)
 {
-    return Trips::direction_id_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+    return Trip::direction_id_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Trips::wheelchair_accessible_enum makeValue<Trips::wheelchair_accessible_enum>(
+Trip::wheelchair_accessible_enum makeValue<Trip::wheelchair_accessible_enum>(
 const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
-    return Trips::wheelchair_accessible_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+    return Trip::wheelchair_accessible_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Trips::bikes_allowed_enum makeValue<Trips::bikes_allowed_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
+Trip::bikes_allowed_enum makeValue<Trip::bikes_allowed_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                                const std::string& name,
                                                                const CSVReader::Row& row)
 {
-    return Trips::bikes_allowed_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+    return Trip::bikes_allowed_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
-Stop_times::pickup_type_enum makeValue<Stop_times::pickup_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
-                                                                     const std::string& name,
-                                                                     const CSVReader::Row& row)
-{
-    return Stop_times::pickup_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
-}
-
-template<>
-Stop_times::drop_off_type_enum makeValue<Stop_times::drop_off_type_enum>(
-const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
-{
-    return Stop_times::drop_off_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
-}
-
-template<>
-Stop_times::continuous_pickup_enum makeValue<Stop_times::continuous_pickup_enum>(
-const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
-{
-    return Stop_times::continuous_pickup_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
-}
-
-template<>
-Stop_times::continuous_drop_off_enum makeValue<Stop_times::continuous_drop_off_enum>(
-const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
-{
-    return Stop_times::continuous_drop_off_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
-}
-
-template<>
-Stop_times::timepoint_enum makeValue<Stop_times::timepoint_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
+StopTime::pickup_type_enum makeValue<StopTime::pickup_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
                                                                  const std::string& name,
                                                                  const CSVReader::Row& row)
 {
-    return Stop_times::timepoint_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+    return StopTime::pickup_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+StopTime::drop_off_type_enum makeValue<StopTime::drop_off_type_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
+                                                                     const std::string& name,
+                                                                     const CSVReader::Row& row)
+{
+    return StopTime::drop_off_type_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+StopTime::continuous_pickup_enum makeValue<StopTime::continuous_pickup_enum>(
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return StopTime::continuous_pickup_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+StopTime::continuous_drop_off_enum makeValue<StopTime::continuous_drop_off_enum>(
+const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
+{
+    return StopTime::continuous_drop_off_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
+}
+
+template<>
+StopTime::timepoint_enum makeValue<StopTime::timepoint_enum>(const map_t<std::string, GTFS::ColumnData>& cdMap,
+                                                             const std::string& name,
+                                                             const CSVReader::Row& row)
+{
+    return StopTime::timepoint_enum(makeValue<std::optional<int>>(cdMap, name, row).value_or(-1));
 }
 
 template<>
@@ -319,20 +320,20 @@ GTFS::GTFS(const std::string& folder)
                                         + "/stops.txt\"");
             this->stops.emplace(
             stop_id,
-            std::make_shared<Stops>(Stops(stop_id,
-                                          makeValue<std::optional<std::string>>(cols, "stop_code", row),
-                                          makeValue<std::optional<std::string>>(cols, "stop_name", row),
-                                          makeValue<std::optional<std::string>>(cols, "stop_desc", row),
-                                          makeValue<std::optional<double>>(cols, "stop_lat", row),
-                                          makeValue<std::optional<double>>(cols, "stop_lon", row),
-                                          makeValue<std::optional<std::string>>(cols, "zone_id", row),
-                                          makeValue<std::optional<std::string>>(cols, "stop_url", row),
-                                          makeValue<Stops::location_type_enum>(cols, "location_type", row),
-                                          makeValue<std::optional<long long>>(cols, "parent_station", row),
-                                          makeValue<std::optional<std::string>>(cols, "stop_timezone", row),
-                                          makeValue<Stops::wheelchair_boarding_enum>(cols, "wheelchair_boarding", row),
-                                          makeValue<std::optional<int>>(cols, "level_id", row),
-                                          makeValue<std::optional<std::string>>(cols, "platform_code", row))));
+            std::make_shared<Stop>(Stop(stop_id,
+                                        makeValue<std::optional<std::string>>(cols, "stop_code", row),
+                                        makeValue<std::optional<std::string>>(cols, "stop_name", row),
+                                        makeValue<std::optional<std::string>>(cols, "stop_desc", row),
+                                        makeValue<std::optional<double>>(cols, "stop_lat", row),
+                                        makeValue<std::optional<double>>(cols, "stop_lon", row),
+                                        makeValue<std::optional<std::string>>(cols, "zone_id", row),
+                                        makeValue<std::optional<std::string>>(cols, "stop_url", row),
+                                        makeValue<Stop::location_type_enum>(cols, "location_type", row),
+                                        makeValue<std::optional<long long>>(cols, "parent_station", row),
+                                        makeValue<std::optional<std::string>>(cols, "stop_timezone", row),
+                                        makeValue<Stop::wheelchair_boarding_enum>(cols, "wheelchair_boarding", row),
+                                        makeValue<std::optional<int>>(cols, "level_id", row),
+                                        makeValue<std::optional<std::string>>(cols, "platform_code", row))));
         }
         int i = 0;
         for(const auto& stop : this->stops)
@@ -395,19 +396,19 @@ GTFS::GTFS(const std::string& folder)
                 throw std::domain_error(std::string("duplicate route_id \"") + route_id + "\" found in \"" + folder
                                         + "/routes.txt\"");
             this->routes.emplace(route_id,
-                                 std::make_shared<Routes>(Routes(
-                                 route_id,
-                                 makeValue<std::optional<int>>(cols, "agency_id", row),
-                                 makeValue<std::optional<std::string>>(cols, "route_short_name", row),
-                                 makeValue<std::optional<std::string>>(cols, "route_long_name", row),
-                                 makeValue<std::optional<std::string>>(cols, "route_desc", row),
-                                 makeValue<Routes::route_type_enum>(cols, "route_type", row),
-                                 makeValue<std::optional<std::string>>(cols, "route_url", row),
-                                 makeValue<std::optional<std::string>>(cols, "route_color", row),
-                                 makeValue<std::optional<std::string>>(cols, "route_text_color", row),
-                                 makeValue<std::optional<unsigned int>>(cols, "route_sort_order", row),
-                                 makeValue<Routes::continuous_pickup_enum>(cols, "continuous_pickup", row),
-                                 makeValue<Routes::continuous_drop_off_enum>(cols, "continuous_drop_off", row))));
+                                 std::make_shared<Route>(
+                                 Route(route_id,
+                                       makeValue<std::optional<int>>(cols, "agency_id", row),
+                                       makeValue<std::optional<std::string>>(cols, "route_short_name", row),
+                                       makeValue<std::optional<std::string>>(cols, "route_long_name", row),
+                                       makeValue<std::optional<std::string>>(cols, "route_desc", row),
+                                       makeValue<Route::route_type_enum>(cols, "route_type", row),
+                                       makeValue<std::optional<std::string>>(cols, "route_url", row),
+                                       makeValue<std::optional<std::string>>(cols, "route_color", row),
+                                       makeValue<std::optional<std::string>>(cols, "route_text_color", row),
+                                       makeValue<std::optional<unsigned int>>(cols, "route_sort_order", row),
+                                       makeValue<Route::continuous_pickup_enum>(cols, "continuous_pickup", row),
+                                       makeValue<Route::continuous_drop_off_enum>(cols, "continuous_drop_off", row))));
         }
 
         int i = 0;
@@ -467,17 +468,17 @@ GTFS::GTFS(const std::string& folder)
                 throw std::domain_error(std::string("duplicate trip_id \"") + std::to_string(trip_id) + "\" found in \""
                                         + folder + "/trips.txt\"");
             this->trips.emplace(trip_id,
-                                std::make_shared<Trips>(
-                                Trips(makeValue<std::string>(cols, "route_id", row),
+                                std::make_shared<Trip>(
+                                Trip(makeValue<std::string>(cols, "route_id", row),
                                       makeValue<int>(cols, "service_id", row),
                                       trip_id,
                                       makeValue<std::optional<std::string>>(cols, "trip_headsign", row),
                                       makeValue<std::optional<std::string>>(cols, "trip_short_name", row),
-                                      makeValue<Trips::direction_id_enum>(cols, "direction_id", row),
+                                      makeValue<Trip::direction_id_enum>(cols, "direction_id", row),
                                       makeValue<std::optional<int>>(cols, "block_id", row),
                                       makeValue<std::optional<int>>(cols, "shape_id", row),
-                                      makeValue<Trips::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
-                                      makeValue<Trips::bikes_allowed_enum>(cols, "bikes_allowed", row))));
+                                      makeValue<Trip::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
+                                      makeValue<Trip::bikes_allowed_enum>(cols, "bikes_allowed", row))));
         }
         int i = 0;
         for(const auto& trip : this->trips)
@@ -537,19 +538,19 @@ GTFS::GTFS(const std::string& folder)
 
         for(auto const& row : csvData)
         {
-            this->stop_times.emplace_back(std::make_shared<Stop_times>(
-            Stop_times(makeValue<stop_times_types::trip_id_t>(cols, "trip_id", row),
-                       makeValue<stop_times_types::arrival_time_t>(cols, "arrival_time", row),
-                       makeValue<stop_times_types::departure_time_t>(cols, "departure_time", row),
-                       makeValue<stop_times_types::stop_id_t>(cols, "stop_id", row),
-                       makeValue<stop_times_types::stop_sequence_t>(cols, "stop_sequence", row),
-                       makeValue<stop_times_types::stop_headsign_t>(cols, "stop_headsign", row),
-                       makeValue<Stop_times::pickup_type_enum>(cols, "pickup_type", row),
-                       makeValue<Stop_times::drop_off_type_enum>(cols, "drop_off_type", row),
-                       makeValue<Stop_times::continuous_pickup_enum>(cols, "continuous_pickup", row),
-                       makeValue<Stop_times::continuous_drop_off_enum>(cols, "continuous_drop_off", row),
-                       makeValue<stop_times_types::shape_dist_traveled_t>(cols, "shape_dist_traveled", row),
-                       makeValue<Stop_times::timepoint_enum>(cols, "timepoint", row))));
+            this->stop_times.emplace_back(std::make_shared<StopTime>(
+            StopTime(makeValue<stop_times_types::trip_id_t>(cols, "trip_id", row),
+                     makeValue<stop_times_types::arrival_time_t>(cols, "arrival_time", row),
+                     makeValue<stop_times_types::departure_time_t>(cols, "departure_time", row),
+                     makeValue<stop_times_types::stop_id_t>(cols, "stop_id", row),
+                     makeValue<stop_times_types::stop_sequence_t>(cols, "stop_sequence", row),
+                     makeValue<stop_times_types::stop_headsign_t>(cols, "stop_headsign", row),
+                     makeValue<StopTime::pickup_type_enum>(cols, "pickup_type", row),
+                     makeValue<StopTime::drop_off_type_enum>(cols, "drop_off_type", row),
+                     makeValue<StopTime::continuous_pickup_enum>(cols, "continuous_pickup", row),
+                     makeValue<StopTime::continuous_drop_off_enum>(cols, "continuous_drop_off", row),
+                     makeValue<stop_times_types::shape_dist_traveled_t>(cols, "shape_dist_traveled", row),
+                     makeValue<StopTime::timepoint_enum>(cols, "timepoint", row))));
         }
         for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)
         { std::cout << *this->stop_times[i] << std::endl; }

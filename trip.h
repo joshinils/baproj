@@ -1,7 +1,7 @@
 #pragma once
 //#include "GTFS.h"
-#include "routes.h"
-#include "stop_times.h"
+#include "route.h"
+#include "stopTime.h"
 #include "type_aliases.h"
 #include <iostream>
 #include <map>
@@ -10,9 +10,9 @@
 #include <string>
 #include <vector>
 
-class Stop_times;
+class StopTime;
 
-class Trips
+class Trip
 {
 public:
     enum class direction_id_enum
@@ -38,17 +38,17 @@ public:
         NoBicycles = 2, // No bicycles are allowed on this trip.
     };
 
-    Trips(std::string route_id,
-          int service_id,
-          int trip_id,
-          std::optional<std::string> trip_headsign,
-          std::optional<std::string> trip_short_name,
-          direction_id_enum direction_id,
-          std::optional<int> block_id,
-          std::optional<int> shape_id,
-          wheelchair_accessible_enum wheelchair_accessible,
-          bikes_allowed_enum bikes_allowed);
-    ~Trips();
+    Trip(std::string route_id,
+         int service_id,
+         int trip_id,
+         std::optional<std::string> trip_headsign,
+         std::optional<std::string> trip_short_name,
+         direction_id_enum direction_id,
+         std::optional<int> block_id,
+         std::optional<int> shape_id,
+         wheelchair_accessible_enum wheelchair_accessible,
+         bikes_allowed_enum bikes_allowed);
+    ~Trip();
 
     /* Identifies a route.
      * ID referencing routes.route_id */
@@ -114,7 +114,7 @@ public:
         2 - No bicycles are allowed on this trip. */
     bikes_allowed_enum getBikes_allowed() const { return bikes_allowed; }
 
-    friend std::ostream& operator<<(std::ostream& ostr, const Trips& trips)
+    friend std::ostream& operator<<(std::ostream& ostr, const Trip& trips)
     {
         ostr << "route_id: " << trips.route_id;
         ostr << ", service_id: " << trips.service_id;
@@ -133,7 +133,7 @@ private:
     /* Identifies a route.
      * ID referencing routes.route_id */
     std::string route_id;
-    std::weak_ptr<Routes> route = std::weak_ptr<Routes>();
+    std::weak_ptr<Route> route = std::weak_ptr<Route>();
     friend class GTFS;
 
     /* Identifies a set of dates when service is available for one or more routes.
@@ -202,5 +202,5 @@ private:
      * ***/
 
     // store the stop_time instances which reference this trip
-    std::map<stop_times_types::stop_sequence_t, std::weak_ptr<Stop_times>> includedStopTimes;
+    std::map<stop_times_types::stop_sequence_t, std::weak_ptr<StopTime>> includedStopTimes;
 };

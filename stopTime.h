@@ -1,15 +1,15 @@
 #pragma once
-#include "stops.h"
-#include "trips.h"
+#include "stop.h"
+#include "trip.h"
 #include "type_aliases.h"
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <string>
 
-class Trips;
+class Trip;
 
-class Stop_times
+class StopTime
 {
 public:
     enum class pickup_type_enum
@@ -55,19 +55,19 @@ public:
         Exact       = 1, // or empty - Times are considered exact.*/
     };
 
-    Stop_times(stop_times_types::trip_id_t trip_id,
-               stop_times_types::arrival_time_t arrival_time,
-               stop_times_types::departure_time_t departure_time,
-               stop_times_types::stop_id_t stop_id,
-               stop_times_types::stop_sequence_t stop_sequence,
-               stop_times_types::stop_headsign_t stop_headsign,
-               pickup_type_enum pickup_type,
-               drop_off_type_enum drop_off_type,
-               continuous_pickup_enum continuous_pickup,
-               continuous_drop_off_enum continuous_drop_off,
-               stop_times_types::shape_dist_traveled_t shape_dist_traveled,
-               timepoint_enum timepoint);
-    ~Stop_times();
+    StopTime(stop_times_types::trip_id_t trip_id,
+             stop_times_types::arrival_time_t arrival_time,
+             stop_times_types::departure_time_t departure_time,
+             stop_times_types::stop_id_t stop_id,
+             stop_times_types::stop_sequence_t stop_sequence,
+             stop_times_types::stop_headsign_t stop_headsign,
+             pickup_type_enum pickup_type,
+             drop_off_type_enum drop_off_type,
+             continuous_pickup_enum continuous_pickup,
+             continuous_drop_off_enum continuous_drop_off,
+             stop_times_types::shape_dist_traveled_t shape_dist_traveled,
+             timepoint_enum timepoint);
+    ~StopTime();
 
     /* Identifies a trip. */
     /* ID referencing trips.trip_id */
@@ -175,7 +175,7 @@ public:
         1 or empty - Times are considered exact.*/
     timepoint_enum getTimepoint() const { return timepoint; }
 
-    friend std::ostream& operator<<(std::ostream& ostr, const Stop_times& stop_times)
+    friend std::ostream& operator<<(std::ostream& ostr, const StopTime& stop_times)
     {
         ostr << "trip_id: " << stop_times.trip_id;
         if(stop_times.arrival_time.has_value()) ostr << ", arrival_time: " << stop_times.arrival_time.value();
@@ -197,7 +197,7 @@ private:
     /* Identifies a trip. */
     /* ID referencing trips.trip_id */
     stop_times_types::trip_id_t trip_id;
-    std::weak_ptr<Trips> trip = std::weak_ptr<Trips>();
+    std::weak_ptr<Trip> trip = std::weak_ptr<Trip>();
     friend class GTFS;
 
     /* Arrival time at a specific stop for a specific trip on a route. If there are not separate times for arrival and
@@ -232,7 +232,7 @@ private:
      * trip, and multiple trips and routes may service the same stop.
      * ID referencing stops.stop_id */
     stop_times_types::stop_id_t stop_id;
-    std::weak_ptr<Stops> stop = std::weak_ptr<Stops>();
+    std::weak_ptr<Stop> stop = std::weak_ptr<Stop>();
 
     /* Order of stops for a particular trip. The values must increase along the trip but do not need to be
      * consecutive.

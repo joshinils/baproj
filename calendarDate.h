@@ -1,10 +1,10 @@
 #pragma once
 
-class Calendar_dates
+class CalendarDate
 {
 public:
-    Calendar_dates();
-    ~Calendar_dates();
+    CalendarDate();
+    ~CalendarDate();
 
 private:
     /* Identifies a set of dates when a service exception occurs for one or more routes. Each (service_id, date) pair
