@@ -5,6 +5,9 @@
 #include <map>
 #include <unordered_map>
 
+
+/*** helper functions in this file ***/
+
 template<typename T>
 T makeValue(const map_t<std::string, GTFS::ColumnData>& cdMap, const std::string& name, const CSVReader::Row& row)
 {
@@ -212,6 +215,40 @@ std::optional<double> makeValue<std::optional<double>>(const map_t<std::string, 
         throw std::domain_error("required field \"" + name + "\" does not exist!");
 }
 
+
+/*** member-functions ***/
+
+GTFS::GTFS(const std::string& folder)
+{
+    readAgency(folder);
+    readStops(folder);
+    readRoutes(folder);
+    readTrips(folder);
+    readStopTimes(folder);
+    readCalendar(folder);
+    readCalendarDates(folder);
+    // readFareAttributes(folder);
+    // readFareRules(folder);
+    readShapes(folder);
+    readFrequencies(folder);
+    readTransfers(folder);
+    readPathways(folder);
+    // readLevels(folder);
+    // readFeedInfo(folder);
+
+    connectTripsStopTimes();
+
+    auto trip = this->trips.begin()->second;
+    std::cout << *trip << std::endl;
+    for(auto a : trip->includedStopTimes)
+    {
+        std::cout << *a.second.lock() << std::endl;
+        std::cout << *a.second.lock()->stop.lock() << std::endl;
+    }
+}
+
+GTFS::~GTFS() { }
+
 void GTFS::setColsToExist(const CSVReader& csvData, map_t<std::string, ColumnData>& cols)
 {
     int colIndex = 0;
@@ -410,7 +447,7 @@ void GTFS::readRoutes(const std::string& folder)
 
 void GTFS::readTrips(const std::string& folder)
 {
-    if(std::filesystem::exists(folder + "/trips.txt")) throw std::string(folder + "/trips.txt not found!");
+    if(!std::filesystem::exists(folder + "/trips.txt")) throw std::string(folder + "/trips.txt not found!");
 
     CSVReader csvData(folder + "/trips.txt");
     csvData.printCSV();
@@ -471,16 +508,9 @@ void GTFS::readTrips(const std::string& folder)
     connectTripRoutesToRoutesId();
 }
 
-/* connect trips to other read files, fill its pointers */
-void GTFS::connectTripRoutesToRoutesId()
-{
-    for(auto trip : this->trips) { trip.second->route = this->routes.at(trip.second->getRoute_id()); }
-}
-
-
 void GTFS::readStopTimes(const std::string& folder)
 {
-    if(std::filesystem::exists(folder + "/stop_times.txt")) throw std::string(folder + "/stop_times.txt not found!");
+    if(!std::filesystem::exists(folder + "/stop_times.txt")) throw std::string(folder + "/stop_times.txt not found!");
 
     CSVReader csvData(folder + "/stop_times.txt");
     csvData.printCSV();
@@ -535,24 +565,6 @@ void GTFS::readStopTimes(const std::string& folder)
     { std::cout << *this->stop_times[i] << std::endl; }
 
     connectStopTimesToTripsAndStops();
-}
-
-/* connect stop_times to other read files, fill its pointers */
-void GTFS::connectStopTimesToTripsAndStops()
-{
-    std::cout << "/* connect stop_times to other read files, fill its pointers */" << std::endl;
-    for(auto& stopService : this->stop_times)
-    {
-        // trip.second->route = this->routes.at(trip.second->getRoute_id());
-
-        // trip
-        const auto& tripId = stopService->getTrip_id();
-        if(this->trips.count(tripId) > 0) stopService->trip = this->trips.at(tripId);
-
-        // stop
-        const auto& stopId = stopService->getStop_id();
-        if(this->stops.count(stopId) > 0) stopService->stop = this->stops.at(stopId);
-    }
 }
 
 void GTFS::readCalendar(const std::string& folder)
@@ -655,37 +667,29 @@ void GTFS::readFeedInfo(const std::string& folder)
     csvData;
 }
 
-
-GTFS::GTFS(const std::string& folder)
+/* connect trips to other read files, fill its pointers */
+void GTFS::connectTripRoutesToRoutesId()
 {
-    readAgency(folder);
-    readStops(folder);
-    readRoutes(folder);
-    readTrips(folder);
-    readStopTimes(folder);
-    readCalendar(folder);
-    readCalendarDates(folder);
-    // readFareAttributes(folder);
-    // readFareRules(folder);
-    readShapes(folder);
-    readFrequencies(folder);
-    readTransfers(folder);
-    readPathways(folder);
-    // readLevels(folder);
-    // readFeedInfo(folder);
-
-    connectTripsStopTimes();
-
-    auto trip = this->trips.begin()->second;
-    std::cout << *trip << std::endl;
-    for(auto a : trip->includedStopTimes)
-    {
-        std::cout << *a.second.lock() << std::endl;
-        std::cout << *a.second.lock()->stop.lock() << std::endl;
-    }
+    for(auto trip : this->trips) { trip.second->route = this->routes.at(trip.second->getRoute_id()); }
 }
 
-GTFS::~GTFS() { }
+/* connect stop_times to other read files, fill its pointers */
+void GTFS::connectStopTimesToTripsAndStops()
+{
+    std::cout << "/* connect stop_times to other read files, fill its pointers */" << std::endl;
+    for(auto& stopService : this->stop_times)
+    {
+        // trip.second->route = this->routes.at(trip.second->getRoute_id());
+
+        // trip
+        const auto& tripId = stopService->getTrip_id();
+        if(this->trips.count(tripId) > 0) stopService->trip = this->trips.at(tripId);
+
+        // stop
+        const auto& stopId = stopService->getStop_id();
+        if(this->stops.count(stopId) > 0) stopService->stop = this->stops.at(stopId);
+    }
+}
 
 void GTFS::connectTripsStopTimes()
 {
