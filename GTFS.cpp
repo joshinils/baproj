@@ -484,14 +484,20 @@ void GTFS::readTrips(const std::string& folder)
             if(++i > this->maxPrint) break;
         }
 
-        /* connect trips to other read files, fill its pointers */
-        for(auto trip : this->trips) { trip.second->route = this->routes.at(trip.second->getRoute_id()); }
+        connectTripRoutesToRoutesId();
     }
     else
     {
         throw std::string(folder + "/trips.txt not found!");
     }
 }
+
+/* connect trips to other read files, fill its pointers */
+void GTFS::connectTripRoutesToRoutesId()
+{
+    for(auto trip : this->trips) { trip.second->route = this->routes.at(trip.second->getRoute_id()); }
+}
+
 
 void GTFS::readStopTimes(const std::string& folder)
 {
@@ -549,24 +555,29 @@ void GTFS::readStopTimes(const std::string& folder)
         for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)
         { std::cout << *this->stop_times[i] << std::endl; }
 
-        /* connect stop_times to other read files, fill its pointers */
-        std::cout << "/* connect stop_times to other read files, fill its pointers */" << std::endl;
-        for(auto& stopService : this->stop_times)
-        {
-            // trip.second->route = this->routes.at(trip.second->getRoute_id());
-
-            // trip
-            const auto& tripId = stopService->getTrip_id();
-            if(this->trips.count(tripId) > 0) stopService->trip = this->trips.at(tripId);
-
-            // stop
-            const auto& stopId = stopService->getStop_id();
-            if(this->stops.count(stopId) > 0) stopService->stop = this->stops.at(stopId);
-        }
+        connectStopTimesToTripsAndStops();
     }
     else
     {
         throw std::string(folder + "/stop_times.txt not found!");
+    }
+}
+
+/* connect stop_times to other read files, fill its pointers */
+void GTFS::connectStopTimesToTripsAndStops()
+{
+    std::cout << "/* connect stop_times to other read files, fill its pointers */" << std::endl;
+    for(auto& stopService : this->stop_times)
+    {
+        // trip.second->route = this->routes.at(trip.second->getRoute_id());
+
+        // trip
+        const auto& tripId = stopService->getTrip_id();
+        if(this->trips.count(tripId) > 0) stopService->trip = this->trips.at(tripId);
+
+        // stop
+        const auto& stopId = stopService->getStop_id();
+        if(this->stops.count(stopId) > 0) stopService->stop = this->stops.at(stopId);
     }
 }
 
