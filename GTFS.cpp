@@ -212,6 +212,17 @@ std::optional<double> makeValue<std::optional<double>>(const map_t<std::string, 
         throw std::domain_error("required field \"" + name + "\" does not exist!");
 }
 
+void GTFS::setColsToExist(const CSVReader& csvData, map_t<std::string, ColumnData>& cols)
+{
+    int colIndex = 0;
+    for(const auto& colName : csvData.getHeader())
+    {
+        cols[colName].exists = true;
+        cols[colName].index  = colIndex;
+        ++colIndex;
+    }
+}
+
 void GTFS::readAgency(const std::string& folder)
 {
     if(std::filesystem::exists(folder + "/agency.txt"))
@@ -239,13 +250,7 @@ void GTFS::readAgency(const std::string& folder)
         cols["agency_fare_url"].isOptional = true;
         cols["agency_email"].isOptional    = true;
 
-        int colIndex = 0;
-        for(const auto& colName : csvData.getHeader())
-        {
-            cols[colName].exists = true;
-            cols[colName].index  = colIndex;
-            ++colIndex;
-        }
+        setColsToExist(csvData, cols);
 
         for(auto const& row : csvData)
         {
@@ -307,13 +312,7 @@ void GTFS::readStops(const std::string& folder)
         cols["level_id"].isOptional            = true;
         cols["platform_code"].isOptional       = true;
 
-        int colIndex = 0;
-        for(const auto& colName : csvData.getHeader())
-        {
-            cols[colName].exists = true;
-            cols[colName].index  = colIndex;
-            ++colIndex;
-        }
+        setColsToExist(csvData, cols);
 
         std::string stop_id;
         for(auto const& row : csvData)
@@ -387,13 +386,7 @@ void GTFS::readRoutes(const std::string& folder)
         cols["continuous_pickup"].isOptional   = true;
         cols["continuous_drop_off"].isOptional = true;
 
-        int colIndex = 0;
-        for(const auto& colName : csvData.getHeader())
-        {
-            cols[colName].exists = true;
-            cols[colName].index  = colIndex;
-            ++colIndex;
-        }
+        setColsToExist(csvData, cols);
 
         std::string route_id;
         for(auto const& row : csvData)
@@ -462,13 +455,7 @@ void GTFS::readTrips(const std::string& folder)
         cols["wheelchair_accessible"].isOptional = true;
         cols["bikes_allowed"].isOptional         = true;
 
-        int colIndex = 0;
-        for(const auto& colName : csvData.getHeader())
-        {
-            cols[colName].exists = true;
-            cols[colName].index  = colIndex;
-            ++colIndex;
-        }
+        setColsToExist(csvData, cols);
 
         int trip_id;
         for(auto const& row : csvData)
@@ -541,13 +528,7 @@ void GTFS::readStopTimes(const std::string& folder)
         cols["shape_dist_traveled"].isOptional = true;
         cols["timepoint"].isOptional           = true;
 
-        int colIndex = 0;
-        for(const auto& colName : csvData.getHeader())
-        {
-            cols[colName].exists = true;
-            cols[colName].index  = colIndex;
-            ++colIndex;
-        }
+        setColsToExist(csvData, cols);
 
         for(auto const& row : csvData)
         {

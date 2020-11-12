@@ -108,5 +108,7 @@ private:
 
     void connectTripsStopTimes();
 
+    void setColsToExist(const CSVReader& csvData, map_t<std::string, ColumnData>& cols);
+
     const int maxPrint = 10;
 };
