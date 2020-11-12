@@ -1,10 +1,10 @@
 #pragma once
 
-class Fare_attributes
+class FareAttribute
 {
 public:
-    Fare_attributes();
-    ~Fare_attributes();
+    FareAttribute();
+    ~FareAttribute();
 
 private:
     /* Identifies a fare class. */

@@ -2,7 +2,7 @@
 #include "agency.h"
 #include "calendar.h"
 #include "calendarDate.h"
-#include "fare_attributes.h"
+#include "fareAttribute.h"
 #include "fare_rules.h"
 #include "feed_info.h"
 #include "frequencies.h"
@@ -66,7 +66,7 @@ private:
     std::optional<std::vector<CalendarDate>> calendar_dates;
 
     // Optional Fare information for a transit agency's routes.
-    std::optional<std::vector<Fare_attributes>> fare_attributes;
+    std::optional<std::vector<FareAttribute>> fare_attributes;
 
     // Optional Rules to apply fares for itineraries.
     std::optional<std::vector<Fare_rules>> fare_rules;
