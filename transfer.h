@@ -1,10 +1,10 @@
 #pragma once
 
-class Transfers
+class Transfer
 {
 public:
-    Transfers();
-    ~Transfers();
+    Transfer();
+    ~Transfer();
 
 private:
     /* Identifies a stop or station where a connection between routes begins. If this field refers to a station, the

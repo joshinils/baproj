@@ -12,7 +12,7 @@
 #include "shape.h"
 #include "stop.h"
 #include "stopTime.h"
-#include "transfers.h"
+#include "transfer.h"
 #include "trip.h"
 #include <map>
 #include <memory>
@@ -79,7 +79,7 @@ private:
     std::optional<std::vector<Frequencies>> frequencies;
 
     // Optional Rules for making connections at transfer points between routes.
-    std::optional<std::vector<Transfers>> transfers;
+    std::optional<std::vector<Transfer>> transfers;
 
     // Optional Pathways linking together locations within stations.
     std::optional<std::vector<Pathways>> pathways;
