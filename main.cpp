@@ -1,9 +1,11 @@
 #include "GTFS.h"
 #include "TimePoint.h"
+#include "stopwatch.h"
 
 int main(int argc, char* argv[])
 try
 {
+    Stopwatch sw(__PRETTY_FUNCTION__);
     /*
     // test timepoint
     std::string s("12:34:56");
@@ -21,6 +23,8 @@ try
 
     //CSVReader csv(argv[1]);
     GTFS data("BVG_VBB_bereichsscharf");
+
+    sw.printTime("after creating GTFS obj");
 
     //std::cout << "foo" << std::endl;
     return 0;

@@ -1,10 +1,11 @@
 #include "GTFS.h"
 #include "CSVReader.h"
+#include "stopwatch.h"
 #include <exception>
 #include <filesystem>
 #include <map>
+#include <thread>
 #include <unordered_map>
-
 
 /*** helper functions in this file ***/
 
@@ -220,23 +221,49 @@ std::optional<double> makeValue<std::optional<double>>(const map_t<std::string, 
 
 GTFS::GTFS(const std::string& folder)
 {
-    readAgency(folder);
-    readStops(folder);
-    readRoutes(folder);
-    readTrips(folder);
-    readStopTimes(folder);
-    readCalendar(folder);
-    readCalendarDates(folder);
-    // readFareAttributes(folder);
-    // readFareRules(folder);
-    readShapes(folder);
-    readFrequencies(folder);
-    readTransfers(folder);
-    readPathways(folder);
-    // readLevels(folder);
-    // readFeedInfo(folder);
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
+    std::thread agencyReader(&GTFS::readAgency, this, std::ref(folder));
+    std::thread StopsReader(&GTFS::readStops, this, std::ref(folder));
+    std::thread RoutesReader(&GTFS::readRoutes, this, std::ref(folder));
+    std::thread TripsReader(&GTFS::readTrips, this, std::ref(folder));
+    std::thread StopTimesReader(&GTFS::readStopTimes, this, std::ref(folder));
+    std::thread CalendarReader(&GTFS::readCalendar, this, std::ref(folder));
+    std::thread CalendarDatesReader(&GTFS::readCalendarDates, this, std::ref(folder));
+    std::thread FareAttributesReader(&GTFS::readFareAttributes, this, std::ref(folder));
+    std::thread FareRulesReader(&GTFS::readFareRules, this, std::ref(folder));
+    std::thread ShapesReader(&GTFS::readShapes, this, std::ref(folder));
+    std::thread FrequenciesReader(&GTFS::readFrequencies, this, std::ref(folder));
+    std::thread TransfersReader(&GTFS::readTransfers, this, std::ref(folder));
+    std::thread PathwaysReader(&GTFS::readPathways, this, std::ref(folder));
+    std::thread LevelsReader(&GTFS::readLevels, this, std::ref(folder));
+    std::thread FeedInfoReader(&GTFS::readFeedInfo, this, std::ref(folder));
+
+    sw.printTime("after creating threads");
+
+    agencyReader.join();
+    StopsReader.join();
+    RoutesReader.join();
+    TripsReader.join();
+    StopTimesReader.join();
+    CalendarReader.join();
+    CalendarDatesReader.join();
+    FareAttributesReader.join();
+    FareRulesReader.join();
+    ShapesReader.join();
+    FrequenciesReader.join();
+    TransfersReader.join();
+    PathwaysReader.join();
+    LevelsReader.join();
+    FeedInfoReader.join();
+
+    sw.printTime("after joining threads");
+
+    connectTripRoutesToRoutesId();
+    connectStopTimesToTripsAndStops();
     connectTripsStopTimes();
+
+    sw.printTime("after connecting data");
 
     auto trip = this->trips.begin()->second;
     std::cout << *trip << std::endl;
@@ -264,8 +291,12 @@ void GTFS::readAgency(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/agency.txt")) throw std::string(folder + "/agency.txt not found!");
 
+    Stopwatch sw(__PRETTY_FUNCTION__);
+
     CSVReader csvData(folder + "/agency.txt");
     csvData.printCSV();
+
+    sw.printTime("after reading the file");
 
     map_t<std::string, ColumnData> cols;
 
@@ -300,16 +331,19 @@ void GTFS::readAgency(const std::string& folder)
                                          makeValue<std::optional<std::string>>(cols, "agency_fare_url", row),
                                          makeValue<std::optional<std::string>>(cols, "agency_email", row)));
     }
-    for(size_t i = 0; i < this->agency.size() && i < this->maxPrint; i++) { std::cout << this->agency[i] << std::endl; }
+    // for(size_t i = 0; i < this->agency.size() && i < this->maxPrint; i++) { std::cout << this->agency[i] << std::endl; }
 }
-
 
 void GTFS::readStops(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/stops.txt")) throw std::string(folder + "/stops.txt not found!");
 
+    Stopwatch sw(__PRETTY_FUNCTION__);
+
     CSVReader csvData(folder + "/stops.txt");
     csvData.printCSV();
+
+    sw.printTime("after reading the file");
 
     map_t<std::string, ColumnData> cols;
 
@@ -369,20 +403,24 @@ void GTFS::readStops(const std::string& folder)
                                     makeValue<std::optional<int>>(cols, "level_id", row),
                                     makeValue<std::optional<std::string>>(cols, "platform_code", row))));
     }
-    int i = 0;
-    for(const auto& stop : this->stops)
-    {
-        std::cout << *(stop.second) << std::endl;
-        if(++i > this->maxPrint) break;
-    }
+    // int i = 0;
+    // for(const auto& stop : this->stops)
+    // {
+    //     std::cout << *(stop.second) << std::endl;
+    //     if(++i > this->maxPrint) break;
+    // }
 }
 
 void GTFS::readRoutes(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/routes.txt")) throw std::string(folder + "/routes.txt not found!");
 
+    Stopwatch sw(__PRETTY_FUNCTION__);
+
     CSVReader csvData(folder + "/routes.txt");
     csvData.printCSV();
+
+    sw.printTime("after reading the file");
 
     map_t<std::string, ColumnData> cols;
 
@@ -437,20 +475,24 @@ void GTFS::readRoutes(const std::string& folder)
                                       makeValue<Route::continuous_drop_off_enum>(cols, "continuous_drop_off", row))));
     }
 
-    int i = 0;
-    for(const auto& route : this->routes)
-    {
-        std::cout << *(route.second) << std::endl;
-        if(++i > this->maxPrint) break;
-    }
+    // int i = 0;
+    // for(const auto& route : this->routes)
+    // {
+    //     std::cout << *(route.second) << std::endl;
+    //     if(++i > this->maxPrint) break;
+    // }
 }
 
 void GTFS::readTrips(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/trips.txt")) throw std::string(folder + "/trips.txt not found!");
 
+    Stopwatch sw(__PRETTY_FUNCTION__);
+
     CSVReader csvData(folder + "/trips.txt");
     csvData.printCSV();
+
+    sw.printTime("after reading the file");
 
     map_t<std::string, ColumnData> cols;
 
@@ -498,22 +540,25 @@ void GTFS::readTrips(const std::string& folder)
                                     makeValue<Trip::wheelchair_accessible_enum>(cols, "wheelchair_accessible", row),
                                     makeValue<Trip::bikes_allowed_enum>(cols, "bikes_allowed", row))));
     }
-    int i = 0;
-    for(const auto& trip : this->trips)
-    {
-        std::cout << *(trip.second) << std::endl;
-        if(++i > this->maxPrint) break;
-    }
 
-    connectTripRoutesToRoutesId();
+    // int i = 0;
+    // for(const auto& trip : this->trips)
+    // {
+    //     std::cout << *(trip.second) << std::endl;
+    //     if(++i > this->maxPrint) break;
+    // }
 }
 
 void GTFS::readStopTimes(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/stop_times.txt")) throw std::string(folder + "/stop_times.txt not found!");
 
+    Stopwatch sw(__PRETTY_FUNCTION__);
+
     CSVReader csvData(folder + "/stop_times.txt");
     csvData.printCSV();
+
+    sw.printTime("after reading the file");
 
     map_t<std::string, ColumnData> cols;
 
@@ -561,16 +606,19 @@ void GTFS::readStopTimes(const std::string& folder)
                  makeValue<stop_times_types::shape_dist_traveled_t>(cols, "shape_dist_traveled", row),
                  makeValue<StopTime::timepoint_enum>(cols, "timepoint", row))));
     }
-    for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)
-    { std::cout << *this->stop_times[i] << std::endl; }
-
-    connectStopTimesToTripsAndStops();
+    // for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)
+    // { std::cout << *this->stop_times[i] << std::endl; }
 }
 
 void GTFS::readCalendar(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/calendar.txt"))
-        std::cout << "optional file " + folder + "/calendar.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/calendar.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/calendar.txt");
     csvData.printCSV();
@@ -580,7 +628,12 @@ void GTFS::readCalendar(const std::string& folder)
 void GTFS::readCalendarDates(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/calendar_dates.txt"))
-        std::cout << "optional file " + folder + "/calendar_dates.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/calendar_dates.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/calendar_dates.txt");
     csvData.printCSV();
@@ -590,7 +643,12 @@ void GTFS::readCalendarDates(const std::string& folder)
 void GTFS::readFareAttributes(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/fare_attributes.txt"))
-        std::cout << "optional file " + folder + "/fare_attributes.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/fare_attributes.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/fare_attributes.txt");
     csvData.printCSV();
@@ -600,7 +658,12 @@ void GTFS::readFareAttributes(const std::string& folder)
 void GTFS::readFareRules(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/fare_rules.txt"))
-        std::cout << "optional file " + folder + "/fare_rules.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/fare_rules.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/fare_rules.txt");
     csvData.printCSV();
@@ -610,7 +673,12 @@ void GTFS::readFareRules(const std::string& folder)
 void GTFS::readShapes(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/shapes.txt"))
-        std::cout << "optional file " + folder + "/shapes.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/shapes.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/shapes.txt");
     csvData.printCSV();
@@ -620,7 +688,12 @@ void GTFS::readShapes(const std::string& folder)
 void GTFS::readFrequencies(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/frequencies.txt"))
-        std::cout << "optional file " + folder + "/frequencies.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/frequencies.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/frequencies.txt");
     csvData.printCSV();
@@ -630,7 +703,12 @@ void GTFS::readFrequencies(const std::string& folder)
 void GTFS::readTransfers(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/transfers.txt"))
-        std::cout << "optional file " + folder + "/transfers.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/transfers.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/transfers.txt");
     csvData.printCSV();
@@ -640,7 +718,12 @@ void GTFS::readTransfers(const std::string& folder)
 void GTFS::readPathways(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/pathways.txt"))
-        std::cout << "optional file " + folder + "/pathways.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/pathways.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/pathways.txt");
     csvData.printCSV();
@@ -650,7 +733,12 @@ void GTFS::readPathways(const std::string& folder)
 void GTFS::readLevels(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/levels.txt"))
-        std::cout << "optional file " + folder + "/levels.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/levels.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/levels.txt");
     csvData.printCSV();
@@ -660,7 +748,12 @@ void GTFS::readLevels(const std::string& folder)
 void GTFS::readFeedInfo(const std::string& folder)
 {
     if(!std::filesystem::exists(folder + "/feed_info.txt"))
-        std::cout << "optional file " + folder + "/feed_info.txt" + " not found\n";
+    {
+        std::cout << "optional file " + folder + "/feed_info.txt" + " not found" << std::endl;
+        return;
+    }
+
+    Stopwatch sw(__PRETTY_FUNCTION__);
 
     CSVReader csvData(folder + "/feed_info.txt");
     csvData.printCSV();
