@@ -1,19 +1,22 @@
 #include "stop.h"
+#include "type_aliases.h"
 
-Stop::Stop(std::string stop_id,
-           std::optional<std::string> stop_code,
-           std::optional<std::string> stop_name,
-           std::optional<std::string> stop_desc,
-           std::optional<double> stop_lat,
-           std::optional<double> stop_lon,
-           std::optional<std::string> zone_id,
-           std::optional<std::string> stop_url,
+using namespace stop_types;
+
+Stop::Stop(stop_id_t stop_id,
+           stop_code_t stop_code,
+           stop_name_t stop_name,
+           stop_desc_t stop_desc,
+           stop_lat_t stop_lat,
+           stop_lon_t stop_lon,
+           zone_id_t zone_id,
+           stop_url_t stop_url,
            location_type_enum location_type,
-           std::optional<long long> parent_station,
-           std::optional<std::string> stop_timezone,
+           parent_station_t parent_station,
+           stop_timezone_t stop_timezone,
            wheelchair_boarding_enum wheelchair_boarding,
-           std::optional<int> level_id,
-           std::optional<std::string> platform_code)
+           level_id_t level_id,
+           platform_code_t platform_code)
     : stop_id(stop_id)
     , stop_code(stop_code)
     , stop_name(stop_name)

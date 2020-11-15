@@ -1,7 +1,13 @@
 #pragma once
+#include "type_aliases.h"
 #include <iostream>
+#include <map>
+#include <memory>
 #include <optional>
 #include <string>
+
+class StopTime;
+
 class Stop
 {
 public:
@@ -23,33 +29,33 @@ public:
         WheelchairInAccessible = 2, // Wheelchair boarding is not possible at this stop.
     };
 
-    Stop(std::string stop_id,
-         std::optional<std::string> stop_code,
-         std::optional<std::string> stop_name,
-         std::optional<std::string> stop_desc,
-         std::optional<double> stop_lat,
-         std::optional<double> stop_lon,
-         std::optional<std::string> zone_id,
-         std::optional<std::string> stop_url,
+    Stop(stop_types::stop_id_t stop_id,
+         stop_types::stop_code_t stop_code,
+         stop_types::stop_name_t stop_name,
+         stop_types::stop_desc_t stop_desc,
+         stop_types::stop_lat_t stop_lat,
+         stop_types::stop_lon_t stop_lon,
+         stop_types::zone_id_t zone_id,
+         stop_types::stop_url_t stop_url,
          location_type_enum location_type,
-         std::optional<long long> parent_station,
-         std::optional<std::string> stop_timezone,
+         stop_types::parent_station_t parent_station,
+         stop_types::stop_timezone_t stop_timezone,
          wheelchair_boarding_enum wheelchair_boarding,
-         std::optional<int> level_id,
-         std::optional<std::string> platform_code = {});
+         stop_types::level_id_t level_id,
+         stop_types::platform_code_t platform_code);
     ~Stop();
 
     /* Identifies a stop, station, or station entrance.
 
     The term ""station entrance"" refers to both station entrances and station exits. Stops,
     stations or station entrances are collectively referred to as locations. Multiple routes may use the same stop.*/
-    std::string getStop_id() const { return stop_id; }
+    stop_types::stop_id_t getStop_id() const { return stop_id; }
 
     /* Short text or a number that identifies the location for riders. These codes are often used in phone-based
      * transit information systems or printed on signage to make it easier for riders to get information for a
      * particular location. The stop_code can be the same as stop_id if it is public facing. This field should be left
      * empty for locations without a code presented to riders. */
-    std::optional<std::string> getStop_code() const { return stop_code; }
+    stop_types::stop_code_t getStop_code() const { return stop_code; }
 
     /* Name of the location. Use a name that people will understand in the local and tourist vernacular.
 
@@ -62,11 +68,11 @@ public:
             or entrances/exits (location_type=2).
         • Optional for locations which are generic nodes (location_type=3) or boarding areas (location_type=4).
     Conditionally Required */
-    std::optional<std::string> getStop_name() const { return stop_name; }
+    stop_types::stop_name_t getStop_name() const { return stop_name; }
 
     /* Description of the location that provides useful, quality information. Do not simply duplicate the name of the
      * location. */
-    std::optional<std::string> getStop_desc() const { return stop_desc; }
+    stop_types::stop_desc_t getStop_desc() const { return stop_desc; }
 
     /* Latitude of the location.
 
@@ -76,7 +82,7 @@ public:
         • Optional for locations which are generic nodes (location_type=3) or boarding areas (location_type=4).
     Latitude
     Conditionally Required */
-    std::optional<double> getStop_lat() const { return stop_lat; }
+    stop_types::stop_lat_t getStop_lat() const { return stop_lat; }
 
     /* Longitude of the location.
 
@@ -86,16 +92,16 @@ public:
         • Optional for locations which are generic nodes (location_type=3) or boarding areas (location_type=4).
     Longitude
     Conditionally Required */
-    std::optional<double> getStop_lon() const { return stop_lon; }
+    stop_types::stop_lon_t getStop_lon() const { return stop_lon; }
 
     /* Identifies the fare zone for a stop. This field is required if providing fare information using fare_rules.txt,
      * otherwise it is optional. If this record represents a station or station entrance, the zone_id is ignored.
      * Conditionally Required */
-    std::optional<std::string> getZone_id() const { return zone_id; }
+    stop_types::zone_id_t getZone_id() const { return zone_id; }
 
     /* URL of a web page about the location. This should be different from the agency.agency_url and the
      * routes.route_url field values. */
-    std::optional<std::string> getStop_url() const { return stop_url; }
+    stop_types::stop_url_t getStop_url() const { return stop_url; }
 
 
     /* Type of the location:
@@ -126,7 +132,7 @@ public:
 
     ID referencing stops.stop_id
     Conditionally Required */
-    std::optional<int> getParent_station() const { return parent_station; }
+    stop_types::parent_station_t getParent_station() const { return parent_station; }
 
     /* Timezone of the location. If the location has a parent station, it inherits the parent station’s timezone
      * instead of applying its own. Stations and parentless stops with empty stop_timezone inherit the timezone
@@ -134,7 +140,7 @@ public:
      * entered as the time since midnight in the timezone specified by agency.agency_timezone. This ensures that the
      * time values in a trip always increase over the course of a trip, regardless of which timezones the trip crosses.
      */
-    std::optional<std::string> getStop_timezone() const { return stop_timezone; }
+    stop_types::stop_timezone_t getStop_timezone() const { return stop_timezone; }
 
     /* Indicates whether wheelchair boardings are possible from the location. Valid options are:
 
@@ -158,13 +164,13 @@ public:
 
     /* Level of the location. The same level can be used by multiple unlinked stations.
      * ID referencing levels.level_id */
-    std::optional<int> getLevel_id() const { return level_id; }
+    stop_types::level_id_t getLevel_id() const { return level_id; }
 
     /* Platform identifier for a platform stop (a stop belonging to a station). This should be just the platform
      * identifier (eg. "G" or "3"). Words like “platform” or "track" (or the feed’s language-specific equivalent) should
      * not be included. This allows feed consumers to more easily internationalize and localize the platform identifier
      * into other languages. */
-    std::optional<std::string> getPlatform_code() const { return platform_code; }
+    stop_types::platform_code_t getPlatform_code() const { return platform_code; }
 
     friend std::ostream& operator<<(std::ostream& ostr, const Stop& stops)
     {
@@ -191,13 +197,13 @@ private:
 
     The term ""station entrance"" refers to both station entrances and station exits. Stops,
     stations or station entrances are collectively referred to as locations. Multiple routes may use the same stop.*/
-    std::string stop_id;
+    stop_types::stop_id_t stop_id;
 
     /* Short text or a number that identifies the location for riders. These codes are often used in phone-based
      * transit information systems or printed on signage to make it easier for riders to get information for a
      * particular location. The stop_code can be the same as stop_id if it is public facing. This field should be left
      * empty for locations without a code presented to riders. */
-    std::optional<std::string> stop_code;
+    stop_types::stop_code_t stop_code;
 
     /* Name of the location. Use a name that people will understand in the local and tourist vernacular.
 
@@ -210,11 +216,11 @@ private:
             or entrances/exits (location_type=2).
         • Optional for locations which are generic nodes (location_type=3) or boarding areas (location_type=4).
     Conditionally Required */
-    std::optional<std::string> stop_name;
+    stop_types::stop_name_t stop_name;
 
     /* Description of the location that provides useful, quality information. Do not simply duplicate the name of the
      * location. */
-    std::optional<std::string> stop_desc;
+    stop_types::stop_desc_t stop_desc;
 
     /* Latitude of the location.
 
@@ -224,7 +230,7 @@ private:
         • Optional for locations which are generic nodes (location_type=3) or boarding areas (location_type=4).
     Latitude
     Conditionally Required */
-    std::optional<double> stop_lat;
+    stop_types::stop_lat_t stop_lat;
 
     /* Longitude of the location.
 
@@ -234,16 +240,16 @@ private:
         • Optional for locations which are generic nodes (location_type=3) or boarding areas (location_type=4).
     Longitude
     Conditionally Required */
-    std::optional<double> stop_lon;
+    stop_types::stop_lon_t stop_lon;
 
     /* Identifies the fare zone for a stop. This field is required if providing fare information using fare_rules.txt,
      * otherwise it is optional. If this record represents a station or station entrance, the zone_id is ignored.
      * Conditionally Required */
-    std::optional<std::string> zone_id;
+    stop_types::zone_id_t zone_id;
 
     /* URL of a web page about the location. This should be different from the agency.agency_url and the
      * routes.route_url field values. */
-    std::optional<std::string> stop_url;
+    stop_types::stop_url_t stop_url;
 
     /* Type of the location:
         • 0 (or empty): Stop (or Platform). A location where passengers board or disembark from a transit vehicle.
@@ -273,7 +279,7 @@ private:
 
     ID referencing stops.stop_id
     Conditionally Required */
-    std::optional<long long> parent_station;
+    stop_types::parent_station_t parent_station;
 
     /* Timezone of the location. If the location has a parent station, it inherits the parent station’s timezone
      * instead of applying its own. Stations and parentless stops with empty stop_timezone inherit the timezone
@@ -281,7 +287,7 @@ private:
      * entered as the time since midnight in the timezone specified by agency.agency_timezone. This ensures that the
      * time values in a trip always increase over the course of a trip, regardless of which timezones the trip crosses.
      */
-    std::optional<std::string> stop_timezone;
+    stop_types::stop_timezone_t stop_timezone;
 
     /* Indicates whether wheelchair boardings are possible from the location. Valid options are:
 
@@ -304,11 +310,20 @@ private:
     wheelchair_boarding_enum wheelchair_boarding = wheelchair_boarding_enum::Unset;
 
     /* Level of the location. The same level can be used by multiple unlinked stations. */
-    /* ID referencing levels.level_id */ std::optional<int> level_id;
+    /* ID referencing levels.level_id */
+    stop_types::level_id_t level_id;
 
     /* Platform identifier for a platform stop (a stop belonging to a station). This should be just the platform
      * identifier (eg. "G" or "3"). Words like “platform” or "track" (or the feed’s language-specific equivalent) should
      * not be included. This allows feed consumers to more easily internationalize and localize the platform identifier
      * into other languages. */
-    std::optional<std::string> platform_code;
+    stop_types::platform_code_t platform_code;
+
+
+    /***
+     * additional data not from read files
+     * ***/
+
+    // store the stop_time instances which reference this trip
+    std::map<stop_times_types::arrival_time_t, std::weak_ptr<StopTime>> includedStopTimes;
 };

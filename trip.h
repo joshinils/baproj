@@ -38,39 +38,39 @@ public:
         NoBicycles = 2, // No bicycles are allowed on this trip.
     };
 
-    Trip(std::string route_id,
-         int service_id,
-         int trip_id,
-         std::optional<std::string> trip_headsign,
-         std::optional<std::string> trip_short_name,
+    Trip(trip_types::route_id_t route_id,
+         trip_types::service_id_t service_id,
+         trip_types::trip_id_t trip_id,
+         trip_types::trip_headsign_t trip_headsign,
+         trip_types::trip_short_name_t trip_short_name,
          direction_id_enum direction_id,
-         std::optional<int> block_id,
-         std::optional<int> shape_id,
+         trip_types::block_id_t block_id,
+         trip_types::shape_id_t shape_id,
          wheelchair_accessible_enum wheelchair_accessible,
          bikes_allowed_enum bikes_allowed);
     ~Trip();
 
     /* Identifies a route.
      * ID referencing routes.route_id */
-    std::string getRoute_id() const { return route_id; }
+    trip_types::route_id_t getRoute_id() const { return route_id; }
 
     /* Identifies a set of dates when service is available for one or more routes.
      * ID referencing calendar.service_id or calendar_dates.service_id */
-    int getService_id() const { return service_id; }
+    trip_types::service_id_t getService_id() const { return service_id; }
 
     /* Identifies a trip. */
-    int getTrip_id() const { return trip_id; }
+    trip_types::trip_id_t getTrip_id() const { return trip_id; }
 
     /* Text that appears on signage identifying the trip's destination to riders. Use this field to distinguish
      * between different patterns of service on the same route. If the headsign changes during a trip, trip_headsign can
      * be overridden by specifying values for the stop_times.stop_headsign. */
-    std::optional<std::string> getTrip_headsign() const { return trip_headsign; }
+    trip_types::trip_headsign_t getTrip_headsign() const { return trip_headsign; }
 
     /* Public facing text used to identify the trip to riders, for instance, to identify train numbers for commuter
      * rail trips. If riders do not commonly rely on trip names, leave this field empty. A trip_short_name value, if
      * provided, should uniquely identify a trip within a service day; it should not be used for destination names or
      * limited/express designations. */
-    std::optional<std::string> getTrip_short_name() const { return trip_short_name; }
+    trip_types::trip_short_name_t getTrip_short_name() const { return trip_short_name; }
 
     /* Indicates the direction of travel for a trip. This field is not used in routing; it provides a way to separate
     trips by direction when publishing time tables. Valid options are:
@@ -88,7 +88,7 @@ public:
     /* Identifies the block to which the trip belongs. A block consists of a single trip or many sequential trips made
      * using the same vehicle, defined by shared service days and block_id. A block_id can have trips with different
      * service days, making distinct blocks. See the example below */
-    std::optional<int> getBlock_id() const { return block_id; }
+    trip_types::block_id_t getBlock_id() const { return block_id; }
 
     /* Identifies a geospatial shape that describes the vehicle travel path for a trip.
 
@@ -98,7 +98,7 @@ public:
     Otherwise, it's optional.
      * ID referencing shapes.shape_id
      * Conditionally required */
-    std::optional<int> getShape_id() const { return shape_id; }
+    trip_types::shape_id_t getShape_id() const { return shape_id; }
 
     /* Indicates wheelchair accessibility. Valid options are:
 
@@ -132,27 +132,27 @@ public:
 private:
     /* Identifies a route.
      * ID referencing routes.route_id */
-    std::string route_id;
+    trip_types::route_id_t route_id;
     std::weak_ptr<Route> route = std::weak_ptr<Route>();
     friend class GTFS;
 
     /* Identifies a set of dates when service is available for one or more routes.
      * ID referencing calendar.service_id or calendar_dates.service_id */
-    int service_id;
+    trip_types::service_id_t service_id;
 
     /* Identifies a trip. */
-    int trip_id;
+    trip_types::trip_id_t trip_id;
 
     /* Text that appears on signage identifying the trip's destination to riders. Use this field to distinguish
      * between different patterns of service on the same route. If the headsign changes during a trip, trip_headsign can
      * be overridden by specifying values for the stop_times.stop_headsign. */
-    std::optional<std::string> trip_headsign;
+    trip_types::trip_headsign_t trip_headsign;
 
     /* Public facing text used to identify the trip to riders, for instance, to identify train numbers for commuter
      * rail trips. If riders do not commonly rely on trip names, leave this field empty. A trip_short_name value, if
      * provided, should uniquely identify a trip within a service day; it should not be used for destination names or
      * limited/express designations. */
-    std::optional<std::string> trip_short_name;
+    trip_types::trip_short_name_t trip_short_name;
 
     /* Indicates the direction of travel for a trip. This field is not used in routing; it provides a way to separate
     trips by direction when publishing time tables. Valid options are:
@@ -170,7 +170,7 @@ private:
     /* Identifies the block to which the trip belongs. A block consists of a single trip or many sequential trips made
      * using the same vehicle, defined by shared service days and block_id. A block_id can have trips with different
      * service days, making distinct blocks. See the example below */
-    std::optional<int> block_id;
+    trip_types::block_id_t block_id;
 
     /* Identifies a geospatial shape that describes the vehicle travel path for a trip.
 
@@ -180,7 +180,7 @@ private:
     Otherwise, it's optional.
      * ID referencing shapes.shape_id
      * Conditionally required */
-    std::optional<int> shape_id;
+    trip_types::shape_id_t shape_id;
 
     /* Indicates wheelchair accessibility. Valid options are:
 

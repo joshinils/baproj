@@ -55,7 +55,7 @@ private:
     void readRoutes(const std::string& folder);
 
     // Trips for each route. A trip is a sequence of two or more stops that occur during a specific time period.
-    map_t<int, std::shared_ptr<Trip>> trips;
+    map_t<trip_types::trip_id_t, std::shared_ptr<Trip>> trips;
     void readTrips(const std::string& folder);
 
     // Times that a vehicle arrives at and departs from stops for each trip.
@@ -109,7 +109,7 @@ private:
     void connectTripsStopTimes();
     void connectTripRoutesToRoutesId();
     void connectStopTimesToTripsAndStops();
-    
+
     void setColsToExist(const CSVReader& csvData, map_t<std::string, ColumnData>& cols);
 
     const int maxPrint = 10;

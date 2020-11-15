@@ -24,17 +24,17 @@ CSVReader::CSVReader(std::string filename)
     {
         if(rows_read++ > max_row_read) break;
 
-        this->_rows.push_back(Row(line));
-        for(size_t i = 0; i < _rows.back()._fields.size(); i++)
-        { _fieldPrintWidths[i] = std::max(_fieldPrintWidths[i], _rows.back()._fields[i].size()); }
+        const auto& newRow = this->_rows.emplace_back(Row(line));
+        for(size_t i = 0; i < newRow._fields.size(); i++)
+        { _fieldPrintWidths[i] = std::max(_fieldPrintWidths[i], newRow._fields[i].size()); }
     }
 }
 
 CSVReader::~CSVReader() { }
 
 
-CSVReader::Row::Row(std::string row)
-    : _line(row)
+CSVReader::Row::Row(const std::string& row)
+//    : _line(row)
 {
     // https://stackoverflow.com/a/30338543/10314791
     enum class CSVState
@@ -50,13 +50,14 @@ CSVReader::Row::Row(std::string row)
     size_t i       = 0; // index of the current field
     for(char const& c : row)
     {
+        static const std::string emptyString("");
         switch(state)
         {
         case CSVState::UnquotedField:
             switch(c)
             {
             case ',': // end of field
-                _fields.push_back("");
+                _fields.emplace_back(emptyString);
                 i++;
                 break;
             case '"': state = CSVState::QuotedField; break;
@@ -75,7 +76,7 @@ CSVReader::Row::Row(std::string row)
             switch(c)
             {
             case ',': // , after closing quote
-                _fields.push_back("");
+                _fields.emplace_back(emptyString);
                 i++;
                 state = CSVState::UnquotedField;
                 break;

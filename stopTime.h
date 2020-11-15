@@ -1,5 +1,4 @@
 #pragma once
-#include "stop.h"
 #include "trip.h"
 #include "type_aliases.h"
 #include <iostream>
@@ -8,6 +7,7 @@
 #include <string>
 
 class Trip;
+class Stop;
 
 class StopTime
 {
@@ -197,7 +197,7 @@ private:
     /* Identifies a trip. */
     /* ID referencing trips.trip_id */
     stop_times_types::trip_id_t trip_id;
-    std::weak_ptr<Trip> trip = std::weak_ptr<Trip>();
+    std::weak_ptr<Trip> trip;
     friend class GTFS;
 
     /* Arrival time at a specific stop for a specific trip on a route. If there are not separate times for arrival and
