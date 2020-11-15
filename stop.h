@@ -7,6 +7,7 @@
 #include <string>
 
 class StopTime;
+class GTFS;
 
 class Stop
 {
@@ -324,6 +325,7 @@ private:
      * additional data not from read files
      * ***/
 
+    friend GTFS;
     // store the stop_time instances which reference this trip
     std::map<stop_times_types::arrival_time_t, std::weak_ptr<StopTime>> includedStopTimes;
 };

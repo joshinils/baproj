@@ -1,11 +1,14 @@
 #include "GTFS.h"
 #include "CSVReader.h"
 #include "stopwatch.h"
+#include <condition_variable>
 #include <exception>
 #include <filesystem>
 #include <map>
+#include <mutex>
 #include <thread>
 #include <unordered_map>
+
 
 /*** helper functions in this file ***/
 
@@ -239,6 +242,10 @@ GTFS::GTFS(const std::string& folder)
     std::thread LevelsReader(&GTFS::readLevels, this, std::ref(folder));
     std::thread FeedInfoReader(&GTFS::readFeedInfo, this, std::ref(folder));
 
+    std::thread stopTimesTripsConnector(&GTFS::connectStopTimesToTrips, this);
+    std::thread tripRoutesToRoutesIdConnector(&GTFS::connectTripRoutesToRoutesId, this);
+    std::thread stopTimesToStopsConnector(&GTFS::connectStopTimesToStops, this);
+
     sw.printTime("after creating threads");
 
     agencyReader.join();
@@ -257,13 +264,11 @@ GTFS::GTFS(const std::string& folder)
     LevelsReader.join();
     FeedInfoReader.join();
 
+    stopTimesTripsConnector.join();
+    tripRoutesToRoutesIdConnector.join();
+    stopTimesToStopsConnector.join();
+
     sw.printTime("after joining threads");
-
-    connectTripRoutesToRoutesId();
-    connectStopTimesToTripsAndStops();
-    connectTripsStopTimes();
-
-    sw.printTime("after connecting data");
 
     auto trip = this->trips.begin()->second;
     std::cout << *trip << std::endl;
@@ -285,6 +290,37 @@ void GTFS::setColsToExist(const CSVReader& csvData, map_t<std::string, ColumnDat
         cols[colName].index  = colIndex;
         ++colIndex;
     }
+}
+void GTFS::waitOnTrips()
+{
+    std::unique_lock<std::mutex> ml(this->tripsMutex);
+    this->tripsCondVar.wait(ml, [&] { return this->tripsDone; });
+    std::cout << std::string(__FILE__) + ":" + std::to_string(__LINE__) + " " + __PRETTY_FUNCTION__
+                 + " finished waiting on trips\n";
+}
+
+void GTFS::waitOnStopTimes()
+{
+    std::unique_lock<std::mutex> ml(this->stopTimesMutex);
+    this->stopTimesCondVar.wait(ml, [&] { return this->stopTimesDone; });
+    std::cout << std::string(__FILE__) + ":" + std::to_string(__LINE__) + " " + __PRETTY_FUNCTION__
+                 + " finished waiting on stopTimes\n";
+}
+
+void GTFS::waitOnStops()
+{
+    std::unique_lock<std::mutex> ml(this->stopsMutex);
+    this->stopsCondVar.wait(ml, [&] { return this->stopsDone; });
+    std::cout << std::string(__FILE__) + ":" + std::to_string(__LINE__) + " " + __PRETTY_FUNCTION__
+                 + " finished waiting on stops\n";
+}
+
+void GTFS::waitOnRoutes()
+{
+    std::unique_lock<std::mutex> ml(this->routesMutex);
+    this->routesCondVar.wait(ml, [&] { return this->routesDone; });
+    std::cout << std::string(__FILE__) + ":" + std::to_string(__LINE__) + " " + __PRETTY_FUNCTION__
+                 + " finished waiting on routes\n";
 }
 
 void GTFS::readAgency(const std::string& folder)
@@ -403,12 +439,12 @@ void GTFS::readStops(const std::string& folder)
                                     makeValue<std::optional<int>>(cols, "level_id", row),
                                     makeValue<std::optional<std::string>>(cols, "platform_code", row))));
     }
-    // int i = 0;
-    // for(const auto& stop : this->stops)
-    // {
-    //     std::cout << *(stop.second) << std::endl;
-    //     if(++i > this->maxPrint) break;
-    // }
+
+    {
+        std::lock_guard<std::mutex> ml(this->stopsMutex);
+        this->stopsDone = true;
+    }
+    this->stopsCondVar.notify_all();
 }
 
 void GTFS::readRoutes(const std::string& folder)
@@ -481,6 +517,12 @@ void GTFS::readRoutes(const std::string& folder)
     //     std::cout << *(route.second) << std::endl;
     //     if(++i > this->maxPrint) break;
     // }
+
+    {
+        std::lock_guard<std::mutex> ml(this->routesMutex);
+        this->routesDone = true;
+    }
+    this->routesCondVar.notify_all();
 }
 
 void GTFS::readTrips(const std::string& folder)
@@ -547,6 +589,12 @@ void GTFS::readTrips(const std::string& folder)
     //     std::cout << *(trip.second) << std::endl;
     //     if(++i > this->maxPrint) break;
     // }
+
+    {
+        std::lock_guard<std::mutex> ml(this->tripsMutex);
+        this->tripsDone = true;
+    }
+    this->tripsCondVar.notify_all();
 }
 
 void GTFS::readStopTimes(const std::string& folder)
@@ -608,6 +656,12 @@ void GTFS::readStopTimes(const std::string& folder)
     }
     // for(size_t i = 0; i < this->stop_times.size() && i < this->maxPrint; i++)
     // { std::cout << *this->stop_times[i] << std::endl; }
+
+    {
+        std::lock_guard<std::mutex> ml(this->stopTimesMutex);
+        this->stopTimesDone = true;
+    }
+    this->stopTimesCondVar.notify_all();
 }
 
 void GTFS::readCalendar(const std::string& folder)
@@ -763,38 +817,52 @@ void GTFS::readFeedInfo(const std::string& folder)
 /* connect trips to other read files, fill its pointers */
 void GTFS::connectTripRoutesToRoutesId()
 {
-    for(auto trip : this->trips) { trip.second->route = this->routes.at(trip.second->getRoute_id()); }
-}
+    waitOnTrips();
+    waitOnRoutes();
 
-/* connect stop_times to other read files, fill its pointers */
-void GTFS::connectStopTimesToTripsAndStops()
-{
-    std::cout << "/* connect stop_times to other read files, fill its pointers */" << std::endl;
-    for(auto& stopService : this->stop_times)
+    std::cout << __FILE__ << ":" << __LINE__ << " " << __PRETTY_FUNCTION__ << std::endl;
+    for(auto trip : this->trips)
     {
-        // trip.second->route = this->routes.at(trip.second->getRoute_id());
-
-        // trip
-        const auto& tripId = stopService->getTrip_id();
-        if(this->trips.count(tripId) > 0) stopService->trip = this->trips.at(tripId);
-
-        // stop
-        const auto& stopId = stopService->getStop_id();
-        if(this->stops.count(stopId) > 0) stopService->stop = this->stops.at(stopId);
+        const auto& routeId = trip.second->getRoute_id();
+        if(this->routes.count(routeId) > 0) trip.second->route = this->routes.at(routeId);
     }
 }
 
-void GTFS::connectTripsStopTimes()
+/* connect stop_times to other read files, fill its pointers */
+void GTFS::connectStopTimesToTrips()
 {
     std::cout << __FILE__ << ":" << __LINE__ << " " << __PRETTY_FUNCTION__ << std::endl;
-    for(auto const& stop_t : this->stop_times)
+
+    waitOnTrips();
+    waitOnStopTimes();
+
+    for(auto& stopTime : this->stop_times)
     {
-        auto trip = stop_t->trip.lock();
-        if(!trip)
+        const auto& tripId = stopTime->getTrip_id();
+        if(this->trips.count(tripId) > 0)
         {
-            std::cout << "warning, a stop_times does not have their trip connected!";
-            continue;
+            const auto& trip = this->trips.at(tripId);
+            stopTime->trip   = trip;
+            trip->includedStopTimes.emplace(stopTime->getStop_sequence(), stopTime);
         }
-        trip->includedStopTimes.emplace(stop_t->getStop_sequence(), stop_t);
+    }
+}
+
+void GTFS::connectStopTimesToStops()
+{
+    std::cout << __FILE__ << ":" << __LINE__ << " " << __PRETTY_FUNCTION__ << std::endl;
+
+    waitOnStopTimes();
+    waitOnStops();
+
+    for(auto& stopTime : this->stop_times)
+    {
+        const auto& stopId = stopTime->getStop_id();
+        if(this->stops.count(stopId) > 0)
+        {
+            const auto& stop = this->stops.at(stopId);
+            stopTime->stop   = stop;
+            stop->includedStopTimes.emplace(stopTime->getArrival_time(), stopTime);
+        }
     }
 }

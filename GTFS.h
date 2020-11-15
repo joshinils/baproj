@@ -14,8 +14,10 @@
 #include "stopTime.h"
 #include "transfer.h"
 #include "trip.h"
+#include <condition_variable>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -49,18 +51,35 @@ private:
     // Stops where vehicles pick up or drop off riders. Also defines stations and station entrances.
     map_t<std::string, std::shared_ptr<Stop>> stops;
     void readStops(const std::string& folder);
+    std::mutex stopsMutex;
+    std::condition_variable stopsCondVar;
+    bool stopsDone = false;
+    void waitOnStops();
+
 
     // Transit routes. A route is a group of trips that are displayed to riders as a single service.
     map_t<std::string, std::shared_ptr<Route>> routes;
     void readRoutes(const std::string& folder);
+    std::mutex routesMutex;
+    std::condition_variable routesCondVar;
+    bool routesDone = false;
+    void waitOnRoutes();
 
     // Trips for each route. A trip is a sequence of two or more stops that occur during a specific time period.
     map_t<trip_types::trip_id_t, std::shared_ptr<Trip>> trips;
     void readTrips(const std::string& folder);
+    std::mutex tripsMutex;
+    std::condition_variable tripsCondVar;
+    bool tripsDone = false;
+    void waitOnTrips();
 
     // Times that a vehicle arrives at and departs from stops for each trip.
     std::vector<std::shared_ptr<StopTime>> stop_times;
     void readStopTimes(const std::string& folder);
+    std::mutex stopTimesMutex;
+    std::condition_variable stopTimesCondVar;
+    bool stopTimesDone = false;
+    void waitOnStopTimes();
 
     // Conditionally required Service dates specified using a weekly schedule with start and end dates.
     // This file is required unless all dates of service are defined in calendar_dates.
@@ -105,10 +124,9 @@ private:
     std::optional<std::vector<Feed_info>> feed_info;
     void readFeedInfo(const std::string& folder);
 
-
-    void connectTripsStopTimes();
     void connectTripRoutesToRoutesId();
-    void connectStopTimesToTripsAndStops();
+    void connectStopTimesToTrips();
+    void connectStopTimesToStops();
 
     void setColsToExist(const CSVReader& csvData, map_t<std::string, ColumnData>& cols);
 
