@@ -46,4 +46,5 @@ add_executable("${PROJECT_NAME}"
     "type_aliases.h"
     "TimePoint.h"
     "TimePoint.cpp"
+    "stopwatch.h"
 )
