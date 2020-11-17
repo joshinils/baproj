@@ -48,3 +48,6 @@ add_executable("${PROJECT_NAME}"
     "TimePoint.cpp"
     "stopwatch.h"
 )
+
+include_directories(graph)
+target_link_libraries ("${PROJECT_NAME}" PUBLIC Graph)

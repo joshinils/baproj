@@ -1,10 +1,14 @@
 #include "GTFS.h"
+#include "Graph.h"
 #include "TimePoint.h"
 #include "stopwatch.h"
 
 int main(int argc, char* argv[])
 try
 {
+    Graph g(0, false);
+    return 0;
+
     Stopwatch sw(__PRETTY_FUNCTION__);
     /*
     // test timepoint
