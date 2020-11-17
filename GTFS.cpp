@@ -226,6 +226,9 @@ GTFS::GTFS(const std::string& folder)
 {
     Stopwatch sw(__PRETTY_FUNCTION__);
 
+    // check if data is present
+    if(!std::filesystem::exists(folder)) throw std::string(folder + " not found! No GTFS-Data to process!");
+
     std::thread agencyReader(&GTFS::readAgency, this, std::ref(folder));
     std::thread StopsReader(&GTFS::readStops, this, std::ref(folder));
     std::thread RoutesReader(&GTFS::readRoutes, this, std::ref(folder));
