@@ -7,6 +7,7 @@ int main(int argc, char* argv[])
 try
 {
     Graph g(0, false);
+    std::cout << g << std::endl;
     return 0;
 
     Stopwatch sw(__PRETTY_FUNCTION__);

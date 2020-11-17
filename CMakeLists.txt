@@ -49,5 +49,5 @@ add_executable("${PROJECT_NAME}"
     "stopwatch.h"
 )
 
-include_directories(graph)
+add_subdirectory(graph)
 target_link_libraries ("${PROJECT_NAME}" PUBLIC Graph)
