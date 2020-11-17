@@ -14,6 +14,7 @@ cmake ..
 make -j "$(nproc)"
 cd ..
 ```
+(cmake needs a C++ compiler)
 
 ## to run; the executable is now located in the `build` directory, named `baproject`:
 ```bash
@@ -58,4 +59,15 @@ baproj
 ├── .git
 ├── .gitignore
 └── .gitmodules
+```
+
+## optionally install missing dependencies
+install opengl:
+```
+sudo apt-get install freeglut3 freeglut3-dev libglew1.5 libglew1.5-dev libglu1-mesa libglu1-mesa-dev libgl1-mesa-glx libgl1-mesa-dev -y
+```
+
+`png.h` missing or another library:
+```
+sudo apt install libpng-dev libxinerama-dev libxrandr-dev libxi-dev libxcursor-dev libxxf86vm-dev -y
 ```
