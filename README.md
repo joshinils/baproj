@@ -10,7 +10,7 @@ cd baproj
 ``` bash
 mkdir build
 cd build
-cmake .. -DCMAKE_CONFIGURATION_TYPES=Release
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j "$(nproc)" baproject
 cd ..
 ```
