@@ -10,8 +10,8 @@ cd baproj
 ``` bash
 mkdir build
 cd build
-cmake ..
-make -j "$(nproc)"
+cmake .. -DCMAKE_CONFIGURATION_TYPES=Release
+make -j "$(nproc)" baproject
 cd ..
 ```
 (cmake needs a C++ compiler)
