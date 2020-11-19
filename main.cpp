@@ -28,9 +28,12 @@ try
 
     auto G = data.makeGraph();
 
-    sw.printTime("after creating generting Graph");
+    std::cout << G.anzKnoten() << '\n';
 
-    std::cout << G << std::endl;
+    sw.printTime("after creating generated Graph");
+
+    //    std::cout << G << std::endl;
+    G.saveToFile("test.gra");
 
     //std::cout << "foo" << std::endl;
     return 0;

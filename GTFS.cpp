@@ -879,8 +879,6 @@ Graph GTFS::makeGraph() const
     Knoten Node("Name");
     G.addNode(Node);
 
-    int stopsToAdd = 1000;
-
     for(const auto& trip : this->trips)
     {
         for(const auto& st : trip.second->includedStopTimes)
@@ -890,17 +888,16 @@ Graph GTFS::makeGraph() const
             name += " Stop_id " + stopTime->getStop_id();
             name += " Arrival_time " + (std::string)stopTime->getArrival_time().value_or(TimePoint("00:00:00"));
             name += " Departure_time " + (std::string)stopTime->getDeparture_time().value_or(TimePoint("00:00:00"));
-            name += " Stop_headsign " + stopTime->getStop_headsign().value_or("");
+            if(stopTime->getStop_headsign().has_value())
+                name += " Stop_headsign " + stopTime->getStop_headsign().value();
 
             const std::shared_ptr<Stop>& stop = stopTime->getStop().lock();
-            name += " Stop_name " + stop->getStop_name().value_or("");
-            name += " Stop_desc " + stop->getStop_desc().value_or("");
+            if(stop->getStop_name().has_value()) name += " Stop_name " + stop->getStop_name().value();
+            if(stop->getStop_desc().has_value()) name += " Stop_desc " + stop->getStop_desc().value();
 
             Knoten node(name, stop->getStop_lat().value_or(0), stop->getStop_lon().value_or(0));
             G.addNode(node);
-            if(--stopsToAdd <= 0) break;
         }
-        if(stopsToAdd < 0) break;
     }
 
     return G;
