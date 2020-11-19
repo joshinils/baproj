@@ -26,6 +26,12 @@ try
 
     sw.printTime("after creating GTFS obj");
 
+    auto G = data.makeGraph();
+
+    sw.printTime("after creating generting Graph");
+
+    std::cout << G << std::endl;
+
     //std::cout << "foo" << std::endl;
     return 0;
 }

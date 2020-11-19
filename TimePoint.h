@@ -1,6 +1,7 @@
 #pragma once
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string_view>
 
 // represents a time of day, i.e. HH:MM:SS
@@ -33,5 +34,12 @@ public:
              << std::setw(2) << std::right << tp.seconds;
         ostr.copyfmt(init); // reset to initial format
         return ostr;
+    }
+
+    operator std::string() const
+    {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
     }
 };

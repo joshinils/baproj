@@ -196,7 +196,7 @@ private:
         2 - No bicycles are allowed on this trip. */
     bikes_allowed_enum bikes_allowed = bikes_allowed_enum::Unset;
 
-
+public:
     /***
      * additional data not from read files
      * ***/

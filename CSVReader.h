@@ -56,7 +56,7 @@ public:
     void printCSV() const;
 
 private:
-    static const int max_row_read = 1000000000;
+    static const int max_row_read;
     Row _header;
     std::vector<Row> _rows;
     std::string _fileName;

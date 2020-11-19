@@ -1,4 +1,5 @@
 #pragma once
+#include "Graph.h"
 #include "agency.h"
 #include "calendar.h"
 #include "calendarDate.h"
@@ -130,5 +131,9 @@ private:
 
     void setColsToExist(const CSVReader& csvData, map_t<std::string, ColumnData>& cols);
 
+public:
+    Graph makeGraph() const;
+
+private:
     const int maxPrint = 10;
 };

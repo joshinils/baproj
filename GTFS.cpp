@@ -869,3 +869,39 @@ void GTFS::connectStopTimesToStops()
         }
     }
 }
+
+
+Graph GTFS::makeGraph() const
+{
+    Stopwatch sw(__PRETTY_FUNCTION__);
+
+    Graph G(0, true);
+    Knoten Node("Name");
+    G.addNode(Node);
+
+    int stopsToAdd = 1000;
+
+    for(const auto& trip : this->trips)
+    {
+        for(const auto& st : trip.second->includedStopTimes)
+        {
+            const std::shared_ptr<StopTime>& stopTime = st.second.lock();
+            std::string name;
+            name += " Stop_id " + stopTime->getStop_id();
+            name += " Arrival_time " + (std::string)stopTime->getArrival_time().value_or(TimePoint("00:00:00"));
+            name += " Departure_time " + (std::string)stopTime->getDeparture_time().value_or(TimePoint("00:00:00"));
+            name += " Stop_headsign " + stopTime->getStop_headsign().value_or("");
+
+            const std::shared_ptr<Stop>& stop = stopTime->getStop().lock();
+            name += " Stop_name " + stop->getStop_name().value_or("");
+            name += " Stop_desc " + stop->getStop_desc().value_or("");
+
+            Knoten node(name, stop->getStop_lat().value_or(0), stop->getStop_lon().value_or(0));
+            G.addNode(node);
+            if(--stopsToAdd <= 0) break;
+        }
+        if(stopsToAdd < 0) break;
+    }
+
+    return G;
+}

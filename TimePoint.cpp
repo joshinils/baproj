@@ -38,7 +38,8 @@ TimePoint::TimePoint(std::string_view const& str)
         auto a = makeHour(str);
         auto b = makeMinute(str);
         auto c = makeSecond(str);
-        throw std::invalid_argument("wtf");
+        throw std::invalid_argument(__FILE__ ":" + std::to_string(__LINE__) + " " + std::to_string(a) + " "
+                                    + std::to_string(b) + " " + std::to_string(c));
     }
 }
 

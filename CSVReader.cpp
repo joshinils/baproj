@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 
+const int CSVReader::max_row_read = 1000000000;
+
 CSVReader::CSVReader(std::string filename)
     : _fileName(filename)
 {

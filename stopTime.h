@@ -232,7 +232,8 @@ private:
      * trip, and multiple trips and routes may service the same stop.
      * ID referencing stops.stop_id */
     stop_times_types::stop_id_t stop_id;
-    std::weak_ptr<Stop> stop = std::weak_ptr<Stop>();
+    std::weak_ptr<Stop> stop;
+    std::weak_ptr<Stop> getStop() { return stop; }
 
     /* Order of stops for a particular trip. The values must increase along the trip but do not need to be
      * consecutive.
