@@ -7,16 +7,16 @@ public:
     ~CalendarDate();
 
 private:
-    /* Identifies a set of dates when a service exception occurs for one or more routes. Each (service_id, date) pair
+    /** Identifies a set of dates when a service exception occurs for one or more routes. Each (service_id, date) pair
      * can only appear once in calendar_dates.txt if using calendar.txt and calendar_dates.txt in conjunction. If a
      * service_id value appears in both calendar.txt and calendar_dates.txt, the information in calendar_dates.txt
      * modifies the service information specified in calendar.txt. */
-    /* ID referencing calendar.service_id or ID */ int service_id; // Required
+    /** ID referencing calendar.service_id or ID */ int service_id; /// Required
 
-    /* Date when service exception occurs. */
-    /* Date */ int date; // Required
+    /** Date when service exception occurs. */
+    /** Date */ int date; /// Required
 
-    /* Indicates whether service is available on the date specified in the date field. Valid options are:
+    /** Indicates whether service is available on the date specified in the date field. Valid options are:
      *
      *  1 - Service has been added for the specified date.
      *  2 - Service has been removed for the specified date.
@@ -27,8 +27,8 @@ private:
      * the holiday to the holiday service_id and to remove the holiday from the regular service_id schedule.*/
     enum class exception_type_enum
     {
-        Added   = 1, // Service has been added for the specified date.
-        Removed = 2, // Service has been removed for the specified date.
+        Added   = 1, /// Service has been added for the specified date.
+        Removed = 2, /// Service has been removed for the specified date.
     };
-    exception_type_enum exception_type; // Required
+    exception_type_enum exception_type; /// Required
 };

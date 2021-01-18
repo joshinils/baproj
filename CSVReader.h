@@ -19,7 +19,7 @@ public:
 
         ~Row() = default;
 
-        // std::string getLine() { return _line; }
+        /// std::string getLine() { return _line; }
         auto begin() const { return _fields.begin(); }
         auto end() const { return _fields.end(); }
         auto size() const { return _fields.size(); }
@@ -36,7 +36,7 @@ public:
         }
 
     private:
-        // std::string _line;
+        /// std::string _line;
         std::vector<std::string> _fields{ "" };
     };
 

@@ -7,7 +7,7 @@ try
 {
     Stopwatch sw(__PRETTY_FUNCTION__);
     /*
-    // test timepoint
+    /// test timepoint
     std::string s("12:34:56");
     TimePoint tp(s);
     std::cout << tp << '\n';
@@ -32,16 +32,16 @@ try
 
     sw.printTime("after creating generated Graph");
 
-    //    std::cout << G << std::endl;
+    ///    std::cout << G << std::endl;
     G.saveToFile("test.gra");
 
     //std::cout << "foo" << std::endl;
     return 0;
 }
-// catch(const std::exception& e)
-// {
-//     std::cerr << e.what() << '\n';
-// }
+/// catch(const std::exception& e)
+/// {
+///     std::cerr << e.what() << '\n';
+/// }
 catch(const std::string& e)
 {
     std::cerr << "aborting! std::string thrown:\n";

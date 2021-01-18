@@ -9,6 +9,9 @@
 #include <thread>
 #include <unordered_map>
 
+/// switch wether to filter by agency, for testing to cut down data size
+/// ignores any data not by s-bahn berlin with agency id "1"
+#define BOOL_FILTER_AGENCY 1
 
 /*** helper functions in this file ***/
 
@@ -226,7 +229,7 @@ GTFS::GTFS(const std::string& folder)
 {
     Stopwatch sw(__PRETTY_FUNCTION__);
 
-    // check if data is present
+    /// check if data is present
     if(!std::filesystem::exists(folder)) throw std::string(folder + " not found! No GTFS-Data to process!");
 
     std::thread agencyReader(&GTFS::readAgency, this, std::ref(folder));
@@ -361,6 +364,9 @@ void GTFS::readAgency(const std::string& folder)
 
     for(auto const& row : csvData)
     {
+#if BOOL_FILTER_AGENCY
+        if(makeValue<std::optional<int>>(cols, "agency_id", row) != 1) continue;
+#endif
         this->agency.emplace_back(Agency(makeValue<std::optional<int>>(cols, "agency_id", row),
                                          makeValue<std::string>(cols, "agency_name", row),
                                          makeValue<std::string>(cols, "agency_url", row),
@@ -370,7 +376,7 @@ void GTFS::readAgency(const std::string& folder)
                                          makeValue<std::optional<std::string>>(cols, "agency_fare_url", row),
                                          makeValue<std::optional<std::string>>(cols, "agency_email", row)));
     }
-    // for(size_t i = 0; i < this->agency.size() && i < this->maxPrint; i++) { std::cout << this->agency[i] << std::endl; }
+    for(size_t i = 0; i < this->agency.size() && i < this->maxPrint; i++) { std::cout << this->agency[i] << std::endl; }
 }
 
 void GTFS::readStops(const std::string& folder)
@@ -494,6 +500,10 @@ void GTFS::readRoutes(const std::string& folder)
     std::string route_id;
     for(auto const& row : csvData)
     {
+#if BOOL_FILTER_AGENCY
+        if(makeValue<std::optional<int>>(cols, "agency_id", row) != 1) continue;
+#endif
+
         route_id = makeValue<std::string>(cols, "route_id", row);
         if(this->routes.count(route_id) > 0)
             throw std::domain_error(std::string("duplicate route_id \"") + route_id + "\" found in \"" + folder
@@ -817,7 +827,7 @@ void GTFS::readFeedInfo(const std::string& folder)
     csvData;
 }
 
-/* connect trips to other read files, fill its pointers */
+/** connect trips to other read files, fill its pointers */
 void GTFS::connectTripRoutesToRoutesId()
 {
     waitOnTrips();
@@ -831,7 +841,7 @@ void GTFS::connectTripRoutesToRoutesId()
     }
 }
 
-/* connect stop_times to other read files, fill its pointers */
+/** connect stop_times to other read files, fill its pointers */
 void GTFS::connectStopTimesToTrips()
 {
     std::cout << __FILE__ << ":" << __LINE__ << " " << __PRETTY_FUNCTION__ << std::endl;
@@ -876,8 +886,8 @@ Graph GTFS::makeGraph() const
     Stopwatch sw(__PRETTY_FUNCTION__);
 
     Graph G(0, true);
-    Knoten Node("Name");
-    G.addNode(Node);
+    Knoten TestNode("TestKnoten");
+    G.addNode(TestNode);
 
     for(const auto& trip : this->trips)
     {

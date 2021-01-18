@@ -16,7 +16,7 @@ namespace stop_times_types
     //using continuous_drop_off_t = continuous_drop_off_enum;
     using shape_dist_traveled_t = std::optional<double>;
     //using timepoint_t           = timepoint_enum;
-} // namespace stop_times_types
+} /// namespace stop_times_types
 
 namespace stop_types
 {
@@ -34,7 +34,7 @@ namespace stop_types
     //using wheelchair_boarding_t = wheelchair_boarding_enum;
     using level_id_t      = std::optional<int>;
     using platform_code_t = std::optional<std::string>;
-} // namespace stop_types
+} /// namespace stop_types
 
 namespace trip_types
 {
@@ -49,4 +49,4 @@ namespace trip_types
     //using wheelchair_accessible_t = wheelchair_accessible_enum;
     //using bikes_allowed_t = bikes_allowed_enum;
 
-} // namespace trip_types
+} /// namespace trip_types

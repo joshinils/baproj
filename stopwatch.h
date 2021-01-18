@@ -5,8 +5,8 @@
 #include <string>
 #include <thread>
 
-// based on an answer in
-// https://stackoverflow.com/questions/38977879/how-can-i-measure-the-execution-time-of-one-thread
+/// based on an answer in
+/// https://stackoverflow.com/questions/38977879/how-can-i-measure-the-execution-time-of-one-thread
 class Stopwatch
 {
 public:

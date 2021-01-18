@@ -45,10 +45,10 @@ TimePoint::TimePoint(std::string_view const& str)
 
 constexpr bool TimePoint::isValid() const noexcept
 {
-    // according to gtfs reference, a timepoint may be on the next day after midnight,
-    // i.e. 26:07:13 means 01:07:13 + 1 Day
+    /// according to gtfs reference, a timepoint may be on the next day after midnight,
+    /// i.e. 26:07:13 means 01:07:13 + 1 Day
     //
-    // hence this is correct
-    //         └─────────vvvvv─vv─vv─v─v
+    /// hence this is correct
+    ///         └─────────vvvvv─vv─vv─v─v
     return hours >= 0 && hours <= 24 * 2 && minutes >= 0 && minutes <= 60 && seconds >= 0 && seconds <= 60;
 }

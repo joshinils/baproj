@@ -36,9 +36,9 @@ CSVReader::~CSVReader() { }
 
 
 CSVReader::Row::Row(const std::string& row)
-//    : _line(row)
+///    : _line(row)
 {
-    // https://stackoverflow.com/a/30338543/10314791
+    /// https://stackoverflow.com/a/30338543/10314791
     enum class CSVState
     {
         UnquotedField,
@@ -49,7 +49,7 @@ CSVReader::Row::Row(const std::string& row)
     _fields.reserve(10);
 
     CSVState state = CSVState::UnquotedField;
-    size_t i       = 0; // index of the current field
+    size_t i       = 0; /// index of the current field
     for(char const& c : row)
     {
         static const std::string emptyString("");
@@ -58,12 +58,12 @@ CSVReader::Row::Row(const std::string& row)
         case CSVState::UnquotedField:
             switch(c)
             {
-            case ',': // end of field
+            case ',': /// end of field
                 _fields.emplace_back(emptyString);
                 i++;
                 break;
             case '"': state = CSVState::QuotedField; break;
-            case '\r': break; // get rid of all '\r'
+            case '\r': break; /// get rid of all '\r'
             default: _fields[i].push_back(c); break;
             }
             break;
@@ -77,16 +77,16 @@ CSVReader::Row::Row(const std::string& row)
         case CSVState::QuotedQuote:
             switch(c)
             {
-            case ',': // , after closing quote
+            case ',': /// , after closing quote
                 _fields.emplace_back(emptyString);
                 i++;
                 state = CSVState::UnquotedField;
                 break;
-            case '"': // "" -> "
+            case '"': /// "" -> "
                 _fields[i].push_back('"');
                 state = CSVState::QuotedField;
                 break;
-            default: // end of quote
+            default: /// end of quote
                 state = CSVState::UnquotedField;
                 break;
             }
@@ -94,10 +94,10 @@ CSVReader::Row::Row(const std::string& row)
         }
     }
 
-    // for(auto l : _fields)
-    // {
-    //     std::cout << l << '\n';
-    // }
+    /// for(auto l : _fields)
+    /// {
+    ///     std::cout << l << '\n';
+    /// }
 }
 
 void CSVReader::printCSV() const

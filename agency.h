@@ -17,36 +17,36 @@ public:
            std::optional<std::string> agency_email);
     ~Agency() = default;
 
-    /* Identifies a transit brandwhich is often synonymous with a transit agency. Note that in some cases, such as when
+    /** Identifies a transit brandwhich is often synonymous with a transit agency. Note that in some cases, such as when
      * a single agency operates multiple separate services, agencies and brands are distinct. This document uses the
      * term "agency" in place of "brand". A dataset may contain data from multiple agencies. This field is required when
      * the dataset contains data for multiple transit agencies, otherwise it is optional.*/
     std::optional<int> getAgency_id() const { return agency_id; }
 
-    /* Full name of the transit agency. */
+    /** Full name of the transit agency. */
     std::string getAgency_name() const { return agency_name; }
 
-    /* URL of the transit agency. */
+    /** URL of the transit agency. */
     std::string getAgency_url() const { return agency_url; }
 
-    /* Timezone where the transit agency is located. If multiple agencies are specified in the dataset, each must have
+    /** Timezone where the transit agency is located. If multiple agencies are specified in the dataset, each must have
      * the same agency_timezone. */
     std::string getAgency_timezone() const { return agency_timezone; }
 
-    /* Primary language used by this transit agency. This field helps GTFS consumers choose capitalization rules and
+    /** Primary language used by this transit agency. This field helps GTFS consumers choose capitalization rules and
      * other language-specific settings for the dataset. */
     std::optional<std::string> getAgency_lang() const { return agency_lang; }
 
-    /* A voice telephone number for the specified agency. This field is a string value that presents the telephone
+    /** A voice telephone number for the specified agency. This field is a string value that presents the telephone
      * number as typical for the agency's service area. It can and should contain punctuation marks to group the digits
      * of the number. Dialable text (for example, TriMet's "503-238-RIDE") is permitted, but the field must not contain
      * any other descriptive text. */
     std::optional<std::string> getAgency_phone() const { return agency_phone; }
 
-    /* URL of a web page that allows a rider to purchase tickets or other fare instruments for that agency online. */
+    /** URL of a web page that allows a rider to purchase tickets or other fare instruments for that agency online. */
     std::optional<std::string> getAgency_fare_url() const { return agency_fare_url; }
 
-    /* Email address actively monitored by the agency’s customer service department. This email address should be a
+    /** Email address actively monitored by the agency’s customer service department. This email address should be a
      * direct contact point where transit riders can reach a customer service representative at the agency. */
     std::optional<std::string> getAgency_email() const { return agency_email; }
 
@@ -64,36 +64,36 @@ public:
     }
 
 private:
-    /* Identifies a transit brandwhich is often synonymous with a transit agency. Note that in some cases, such as when
+    /** Identifies a transit brandwhich is often synonymous with a transit agency. Note that in some cases, such as when
      * a single agency operates multiple separate services, agencies and brands are distinct. This document uses the
      * term "agency" in place of "brand". A dataset may contain data from multiple agencies. This field is required when
      * the dataset contains data for multiple transit agencies, otherwise it is optional.*/
     std::optional<int> agency_id;
 
-    /* Full name of the transit agency. */
+    /** Full name of the transit agency. */
     std::string agency_name;
 
-    /* URL of the transit agency. */
+    /** URL of the transit agency. */
     std::string agency_url;
 
-    /* Timezone where the transit agency is located. If multiple agencies are specified in the dataset, each must have
+    /** Timezone where the transit agency is located. If multiple agencies are specified in the dataset, each must have
      * the same agency_timezone. */
     std::string agency_timezone;
 
-    /* Primary language used by this transit agency. This field helps GTFS consumers choose capitalization rules and
+    /** Primary language used by this transit agency. This field helps GTFS consumers choose capitalization rules and
      * other language-specific settings for the dataset. */
     std::optional<std::string> agency_lang;
 
-    /* A voice telephone number for the specified agency. This field is a string value that presents the telephone
+    /** A voice telephone number for the specified agency. This field is a string value that presents the telephone
      * number as typical for the agency's service area. It can and should contain punctuation marks to group the digits
      * of the number. Dialable text (for example, TriMet's "503-238-RIDE") is permitted, but the field must not contain
      * any other descriptive text. */
     std::optional<std::string> agency_phone;
 
-    /* URL of a web page that allows a rider to purchase tickets or other fare instruments for that agency online. */
+    /** URL of a web page that allows a rider to purchase tickets or other fare instruments for that agency online. */
     std::optional<std::string> agency_fare_url;
 
-    /* Email address actively monitored by the agency’s customer service department. This email address should be a
+    /** Email address actively monitored by the agency’s customer service department. This email address should be a
      * direct contact point where transit riders can reach a customer service representative at the agency. */
     std::optional<std::string> agency_email;
 };
